@@ -17,7 +17,10 @@
  */
 package com.github.calenria.simplechat.listener;
 
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -34,14 +37,14 @@ import com.github.calenria.simplechat.Utils;
  * 
  */
 public class SimpleChatListener implements Listener {
-    // /**
-    // * Bukkit Logger.
-    // */
-    // private static Logger log = Logger.getLogger("Minecraft");
+    /**
+     * Bukkit Logger.
+     */
+    private static Logger log    = Logger.getLogger("Minecraft");
     /**
      * NextVote Plugin.
      */
-    private SimpleChat plugin = null;
+    private SimpleChat    plugin = null;
 
     /**
      * Registriert die Eventhandler und erstellt die Datenbank falls nicht vorhanden.
@@ -56,8 +59,17 @@ public class SimpleChatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerJoinEvent(final PlayerJoinEvent event) {
-        String tabName = "@#login@" + event.getPlayer().getDisplayName();
-        event.getPlayer().sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
+        final String sPlayer = event.getPlayer().getName();
+        plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                Player player = Bukkit.getPlayer(sPlayer);
+                String displayName = plugin.chat.getPlayerPrefix(player.getWorld(), sPlayer) + player.getName();
+                log.info("Set Tablist name to " + displayName);
+                String tabName = "@#login@" + displayName;
+                player.sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
+            }
+        }, Utils.TASK_ONE_SECOND);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
