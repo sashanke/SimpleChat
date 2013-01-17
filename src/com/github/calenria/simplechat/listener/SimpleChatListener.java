@@ -65,7 +65,6 @@ public class SimpleChatListener implements Listener {
             public void run() {
                 Player player = Bukkit.getPlayer(sPlayer);
                 String displayName = plugin.chat.getPlayerPrefix(player.getWorld(), sPlayer) + player.getName();
-                log.info("Set Tablist name to " + displayName);
                 String tabName = "@#login@" + displayName;
                 player.sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
             }
