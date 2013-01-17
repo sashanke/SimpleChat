@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.github.calenria.simplechat.SimpleChat;
 import com.github.calenria.simplechat.Utils;
@@ -51,6 +52,12 @@ public class SimpleChatListener implements Listener {
     public SimpleChatListener(final SimpleChat nvPlugin) {
         this.plugin = nvPlugin;
         Bukkit.getPluginManager().registerEvents(this, this.plugin);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onPlayerJoinEvent(final PlayerJoinEvent event) {
+        String tabName = "@#login@" + event.getPlayer().getDisplayName();
+        event.getPlayer().sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
