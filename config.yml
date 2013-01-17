@@ -1,0 +1,3 @@
+server: '&7[S] &f<prefix><playerdn>&7: <msg>'
+hilfe: '&e[H] &f<prefix><playerdn>&e: <msg>'
+srvpm: '&d<from> &d-> <to>&d: <msg>'
