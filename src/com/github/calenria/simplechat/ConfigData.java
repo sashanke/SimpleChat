@@ -30,6 +30,13 @@ public class ConfigData {
     private String server;
     private String hilfe;
     private String srvpm;
+    private String global;
+    private String team;
+    private String lokal;
+    private String spy;
+    private String pmSpy;
+    private String to;
+    private Long   radius;
 
     /**
      * @param plugin
@@ -40,6 +47,49 @@ public class ConfigData {
         setServer(config.getString("server"));
         setHilfe(config.getString("hilfe"));
         setSrvpm(config.getString("srvpm"));
+
+        setGlobal(config.getString("global"));
+        setTeam(config.getString("team"));
+        setLokal(config.getString("lokal"));
+        setSpy(config.getString("spy"));
+        setPmSpy(config.getString("pmspy"));
+        setRadius(config.getLong("radius"));
+        setTo(config.getString("to"));
+    }
+
+    /**
+     * @return the global
+     */
+    public String getGlobal() {
+        return global;
+    }
+
+    /**
+     * @return the hilfe
+     */
+    public String getHilfe() {
+        return hilfe;
+    }
+
+    /**
+     * @return the lokal
+     */
+    public String getLokal() {
+        return lokal;
+    }
+
+    /**
+     * @return the pmspy
+     */
+    public String getPmSpy() {
+        return pmSpy;
+    }
+
+    /**
+     * @return the radius
+     */
+    public Long getRadius() {
+        return radius;
     }
 
     /**
@@ -50,18 +100,32 @@ public class ConfigData {
     }
 
     /**
-     * @param server
-     *            the server to set
+     * @return the spy
      */
-    public void setServer(String server) {
-        this.server = server;
+    public String getSpy() {
+        return spy;
     }
 
     /**
-     * @return the hilfe
+     * @return the srvpm
      */
-    public String getHilfe() {
-        return hilfe;
+    public String getSrvpm() {
+        return srvpm;
+    }
+
+    /**
+     * @return the team
+     */
+    public String getTeam() {
+        return team;
+    }
+
+    /**
+     * @param global
+     *            the global to set
+     */
+    public void setGlobal(String global) {
+        this.global = global;
     }
 
     /**
@@ -73,10 +137,43 @@ public class ConfigData {
     }
 
     /**
-     * @return the srvpm
+     * @param lokal
+     *            the lokal to set
      */
-    public String getSrvpm() {
-        return srvpm;
+    public void setLokal(String lokal) {
+        this.lokal = lokal;
+    }
+
+    /**
+     * @param pmspy
+     *            the pmspy to set
+     */
+    public void setPmSpy(String pmSpy) {
+        this.pmSpy = pmSpy;
+    }
+
+    /**
+     * @param radius
+     *            the radius to set
+     */
+    public void setRadius(Long radius) {
+        this.radius = radius;
+    }
+
+    /**
+     * @param server
+     *            the server to set
+     */
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    /**
+     * @param spy
+     *            the spy to set
+     */
+    public void setSpy(String spy) {
+        this.spy = spy;
     }
 
     /**
@@ -85,6 +182,29 @@ public class ConfigData {
      */
     public void setSrvpm(String srvpm) {
         this.srvpm = srvpm;
+    }
+
+    /**
+     * @param team
+     *            the team to set
+     */
+    public void setTeam(String team) {
+        this.team = team;
+    }
+
+    /**
+     * @return the to
+     */
+    public String getTo() {
+        return to;
+    }
+
+    /**
+     * @param to
+     *            the to to set
+     */
+    public void setTo(String to) {
+        this.to = to;
     }
 
 }

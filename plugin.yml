@@ -5,5 +5,5 @@ website: https://github.com/Calenria/NextVote
 author: Calenria
 description: SimpleChat!
 database: false
-depend: [Vault, WorldEdit]
-softdepend: [Herochat]           
+depend: [Vault, WorldEdit, zBungeeTools]
+softdepend: [Jobs]           

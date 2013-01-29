@@ -17,12 +17,16 @@
  */
 package com.github.calenria.simplechat.listener;
 
+import java.util.StringTokenizer;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import com.github.calenria.bungeetools.zBungeeTools;
+import com.github.calenria.simplechat.Chatter;
 import com.github.calenria.simplechat.SimpleChat;
-import com.github.calenria.simplechat.Utils;
 
 /**
  * Eventlistener Klasse.
@@ -31,14 +35,15 @@ import com.github.calenria.simplechat.Utils;
  * 
  */
 public class SimpleChatPluginListener implements PluginMessageListener {
-    // /**
-    // * Bukkit Logger.
-    // */
-    // private static Logger log = Logger.getLogger("Minecraft");
+    /**
+     * Bukkit Logger.
+     */
+    @SuppressWarnings("unused")
+    private static Logger log    = Logger.getLogger("Minecraft");
     /**
      * NextVote Plugin.
      */
-    private SimpleChat plugin = null;
+    private SimpleChat    plugin = null;
 
     /**
      * Registriert die Eventhandler und erstellt die Datenbank falls nicht vorhanden.
@@ -54,21 +59,49 @@ public class SimpleChatPluginListener implements PluginMessageListener {
     public void onPluginMessageReceived(String channel, Player sPlayer, byte[] byteMessage) {
         if (!channel.equals("SimpleChat"))
             return;
-        String stringMessage = new String(byteMessage);
+        String pluginMessage = new String(byteMessage);
+        System.out.println(pluginMessage);
 
-        if (stringMessage.startsWith("@#@")) {
-            String[] data = stringMessage.substring(3).split("@#@");
-            String to = "";
+        StringTokenizer st = new StringTokenizer(pluginMessage, "@#@");
+        String type = st.nextToken();
 
-            if (data[1] != null && data[1].length() >= 0) {
-                to = data[1];
-            }
-            String msg = Utils.replaceTo(data[2], to,data[3],plugin);
-            sPlayer.sendMessage(msg);
+        if (type.equals("ping")) {
+            zBungeeTools.updateCurrOnline();
+            return;
+        }
+
+        if (type.equals("wp")) {
+            String whisperPartner = st.nextToken();
+            String chatter = st.nextToken();
+            Chatter c = plugin.getChatter(chatter);
+            plugin.removeChatter(chatter);
+            c.setLastWhisperFrom(whisperPartner);
+            plugin.setChatter(c);
+            return;
+        }
+
+        String serverName = st.nextToken();
+        System.out.println("Message From Servername: " + serverName);
+        if (st.hasMoreTokens()) {
+            String pluginChannel = st.nextToken();
+            @SuppressWarnings("unused")
+            String sender = st.nextToken();
+            String message = st.nextToken();
+            sendMessage(pluginChannel, message);
+        }
+    }
+
+    private void sendMessage(String pluginChannel, String message) {
+        if (!pluginChannel.equals("Global")) {
+            Bukkit.broadcast(message, "simplechat." + pluginChannel.toLowerCase());
         } else {
-            Bukkit.broadcastMessage(stringMessage);
+            Player[] players = Bukkit.getOnlinePlayers();
+            for (Player player : players) {
+                if (player.hasPermission("simplechat." + pluginChannel.toLowerCase()) && !player.hasPermission("simplechat.gobal.off")) {
+                    player.sendMessage(message);
+                }
+            }
         }
 
     }
-
 }

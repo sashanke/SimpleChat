@@ -273,6 +273,25 @@ public final class Utils {
         return ChatColor.translateAlternateColorCodes('&', search);
     }
 
+    public static String replaceFrom(final String text, final String from, SimpleChat plugin) {
+        String search = text.trim();
+        String prefix = "";
+        String fromPlayer = from;
+        try {
+            prefix = plugin.chat.getPlayerPrefix(Bukkit.getPlayer(from));
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        try {
+            fromPlayer = Bukkit.getPlayer(from).getName();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        search = search.replaceAll("<from>", prefix + fromPlayer);
+        search = replaceColors(search);
+        return search;
+    }
+
     /**
      * Ersetzt Platzhalter für Farben und Spielernamen.
      * 
@@ -318,25 +337,6 @@ public final class Utils {
         return search;
     }
 
-    public static String replaceFrom(final String text, final String from, SimpleChat plugin) {
-        String search = text.trim();
-        String prefix = "";
-        String fromPlayer = from;
-        try {
-            prefix = plugin.chat.getPlayerPrefix(Bukkit.getPlayer(from));
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        try {
-            fromPlayer = Bukkit.getPlayer(from).getDisplayName();
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        search = search.replaceAll("<from>", prefix + fromPlayer);
-        search = replaceColors(search);
-        return search;
-    }
-
     public static String replaceTo(final String text, final String to, final String msg, SimpleChat plugin) {
         String search = text.trim();
         String prefix = "";
@@ -348,7 +348,7 @@ public final class Utils {
         }
 
         try {
-            toPlayer = Bukkit.getPlayer(to).getDisplayName();
+            toPlayer = Bukkit.getPlayer(to).getName();
         } catch (Exception e) {
             // TODO: handle exception
         }

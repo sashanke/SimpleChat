@@ -22,12 +22,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import me.zford.jobs.bukkit.JobsPlugin;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -39,9 +42,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.github.calenria.simplechat.commands.SimpleChatCommands;
 import com.github.calenria.simplechat.listener.SimpleChatListener;
 import com.github.calenria.simplechat.listener.SimpleChatPluginListener;
-import com.github.calenria.simplechat.listener.SimpleHeroChatListener;
+import com.sk89q.bukkit.util.CommandsManagerRegistration;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissionsException;
 import com.sk89q.minecraft.util.commands.CommandUsageException;
@@ -87,6 +91,58 @@ public class SimpleChat extends JavaPlugin {
      */
     private static Economy                 economy    = null;
 
+    public Map<String, Chatter>            chatters   = new HashMap<String, Chatter>();
+
+    /**
+     * @return the chatters
+     */
+    public synchronized Chatter getChatter(String name) {
+        if (chatters.containsKey(name)) {
+            return chatters.get(name);
+        }
+        return null;
+    }
+
+    /**
+     * @param chatters
+     *            the chatters to set
+     */
+    public synchronized void setChatter(Chatter chatter) {
+        this.chatters.put(chatter.getName(), chatter);
+    }
+
+    /**
+     * @param chatters
+     *            the chatters to set
+     */
+    public synchronized void setConversionPartner(String name, String conversionPartner) {
+        if (chatters.containsKey(name)) {
+            Chatter c = chatters.get(name);
+            c.setConversionPartner(conversionPartner);
+            chatters.remove(name);
+            chatters.put(name, c);
+        }
+    }
+
+    /**
+     * @param chatters
+     *            the chatters to set
+     */
+    public synchronized void removeConversionPartner(String name) {
+        if (chatters.containsKey(name)) {
+            Chatter c = chatters.get(name);
+            c.removeConversionPartner();
+            chatters.remove(name);
+            chatters.put(name, c);
+        }
+    }
+
+    public synchronized void removeChatter(String chatter) {
+        if (chatters.containsKey(chatter)) {
+            chatters.remove(chatter);
+        }
+    }
+
     /**
      * Vault Permissions.
      * 
@@ -99,31 +155,31 @@ public class SimpleChat extends JavaPlugin {
     /**
      * ResourceBundle der I18N Strings.
      */
-    private ResourceBundle        messages  = null;
+    private ResourceBundle    messages  = null;
     /**
      * ResourceBundle der I18N Item Namen.
      */
-    private ResourceBundle        items     = null;
+    private ResourceBundle    items     = null;
 
     /**
      * Liste der heutigen Votes.
      */
-    private List<String>          currVotes = new ArrayList<String>();
+    private List<String>      currVotes = new ArrayList<String>();
 
     /**
      * String der gewählten Sprache.
      */
-    private String                lang      = "de";
+    private String            lang      = "de";
 
-    public SimpleChatListener     listener;
+    public SimpleChatListener listener;
 
-    public boolean                herochat  = false;
+    public Chat               chat;
 
-    public SimpleHeroChatListener listenerHerochat;
+    public ConfigData         config;
 
-    public Chat                   chat;
+    public static boolean     jobs      = false;
 
-    public ConfigData            config;
+    public static JobsPlugin  jobsPlugin;
 
     /**
      * Fügt einen Spielervote zur heutigen liste hinzu.
@@ -200,17 +256,17 @@ public class SimpleChat extends JavaPlugin {
         try {
             commands.execute(cmd.getName(), args, sender, sender);
         } catch (CommandPermissionsException e) {
-            sender.sendMessage(ChatColor.RED + messages.getString("noPerms"));
+            sender.sendMessage(ChatColor.RED + "Du hast keinen zugriff auf diesen Befehl!");
         } catch (MissingNestedCommandException e) {
             sender.sendMessage(ChatColor.RED + e.getUsage());
         } catch (CommandUsageException e) {
-            sender.sendMessage(ChatColor.RED + e.getMessage());
+            sender.sendMessage(ChatColor.RED + e.getLocalizedMessage());
             sender.sendMessage(ChatColor.RED + e.getUsage());
         } catch (WrappedCommandException e) {
             if (e.getCause() instanceof NumberFormatException) {
-                sender.sendMessage(ChatColor.RED + messages.getString("numberFormat"));
+                sender.sendMessage(ChatColor.RED + "Zahl erwartet, erhielt aber eine Zeichenfolge.");
             } else {
-                sender.sendMessage(ChatColor.RED + messages.getString("exception"));
+                sender.sendMessage(ChatColor.RED + "Ein Fehler ist aufgetreten, genaueres findest du in der Konsole");
                 e.printStackTrace();
             }
         } catch (CommandException e) {
@@ -236,10 +292,13 @@ public class SimpleChat extends JavaPlugin {
      */
     @Override
     public final void onEnable() {
-        if (getServer().getPluginManager().getPlugin("Herochat") != null) {
-            herochat = true;
-            log.log(Level.INFO, String.format("[%s] Herochat %s found", getDescription().getName(), getServer().getPluginManager().getPlugin("Herochat").getDescription().getVersion()));
+
+        if (getServer().getPluginManager().getPlugin("Jobs") != null) {
+            jobs = true;
+            jobsPlugin = (JobsPlugin) Bukkit.getServer().getPluginManager().getPlugin("Jobs");
+            log.log(Level.INFO, String.format("[%s] Jobs %s found", getDescription().getName(), getServer().getPluginManager().getPlugin("Jobs").getDescription().getVersion()));
         }
+
         setupPermissions();
         setupEconomy();
         setupChat();
@@ -250,37 +309,6 @@ public class SimpleChat extends JavaPlugin {
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "SimpleChat", new SimpleChatPluginListener(this));
 
         log.log(Level.INFO, String.format("[%s] Enabled Version %s", getDescription().getName(), getDescription().getVersion()));
-    }
-
-    private boolean setupChat() {
-        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
-        if (chatProvider != null) {
-            chat = chatProvider.getProvider();
-        }
-
-        return (chat != null);
-    }
-
-    public void setupListeners() {
-        listener = new SimpleChatListener(this);
-        if (herochat) {
-            listenerHerochat = new SimpleHeroChatListener(this);
-            log.log(Level.INFO, String.format("[%s] Herochat Listener enabled", getDescription().getName()));
-        }
-    }
-
-    /**
-     * Liest die Konfiguration aus und erzeugt ein ConfigData Objekt.
-     */
-    public final void setupConfig() {
-        if (!new File(this.getDataFolder(), "config.yml").exists()) {
-            this.getConfig().options().copyDefaults(true);
-            this.saveConfig();
-        } else {
-            this.reloadConfig();
-        }
-        this.config = new ConfigData(this);
-
     }
 
     /**
@@ -347,6 +375,15 @@ public class SimpleChat extends JavaPlugin {
         this.lang = language;
     }
 
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        if (chatProvider != null) {
+            chat = chatProvider.getProvider();
+        }
+
+        return (chat != null);
+    }
+
     /**
      * Initialisierung der Plugin Befehle.
      */
@@ -360,7 +397,22 @@ public class SimpleChat extends JavaPlugin {
 
         commands.setInjector(new SimpleInjector(this));
 
-        // CommandsManagerRegistration cmdRegister = new CommandsManagerRegistration(this, this.commands);
+        CommandsManagerRegistration cmdRegister = new CommandsManagerRegistration(this, this.commands);
+        cmdRegister.register(SimpleChatCommands.class);
+
+    }
+
+    /**
+     * Liest die Konfiguration aus und erzeugt ein ConfigData Objekt.
+     */
+    public final void setupConfig() {
+        if (!new File(this.getDataFolder(), "config.yml").exists()) {
+            this.getConfig().options().copyDefaults(true);
+            this.saveConfig();
+        } else {
+            this.reloadConfig();
+        }
+        this.config = new ConfigData(this);
 
     }
 
@@ -382,7 +434,10 @@ public class SimpleChat extends JavaPlugin {
      */
     public final void setupLang() {
         messages = readProperties("messages_");
-        setItems(readProperties("items_"));
+    }
+
+    public void setupListeners() {
+        listener = new SimpleChatListener(this);
     }
 
     /**
