@@ -5,7 +5,7 @@ Simple Global Chat
 
 Permissions
 ==========
-
+```
 User
     - simplechat.Global
     - simplechat.Hilfe
@@ -16,10 +16,10 @@ Admin
     - simplechat.Admin
     - simplechat.spy
     - simplechat.pmspy
-
+```
 Benutzung
 ==========
-
+```
 ! = Global / Serverübergreifend
 ? = Hilfe / Serverübergreifend
 # = Team / Serverübergreifend
@@ -27,3 +27,4 @@ Benutzung
 @name = Flüstern / Serverübergreifend
 @@name = Setzt einen Flüster Kanal, man kann auch initial eine Nachricht mitsenden @@name nachricht.
 /r = Antwort auf das letzte Flüstern
+```
