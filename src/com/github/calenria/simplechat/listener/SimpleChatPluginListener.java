@@ -38,7 +38,6 @@ public class SimpleChatPluginListener implements PluginMessageListener {
     /**
      * Bukkit Logger.
      */
-    @SuppressWarnings("unused")
     private static Logger log    = Logger.getLogger("Minecraft");
     /**
      * NextVote Plugin.
@@ -60,7 +59,7 @@ public class SimpleChatPluginListener implements PluginMessageListener {
         if (!channel.equals("SimpleChat"))
             return;
         String pluginMessage = new String(byteMessage);
-        System.out.println(pluginMessage);
+        log.info("Recived plugin message: " + pluginMessage);
 
         StringTokenizer st = new StringTokenizer(pluginMessage, "@#@");
         String type = st.nextToken();
@@ -81,7 +80,7 @@ public class SimpleChatPluginListener implements PluginMessageListener {
         }
 
         String serverName = st.nextToken();
-        System.out.println("Message From Servername: " + serverName);
+        log.info("Message From Servername: " + serverName);
         if (st.hasMoreTokens()) {
             String pluginChannel = st.nextToken();
             @SuppressWarnings("unused")
@@ -92,6 +91,7 @@ public class SimpleChatPluginListener implements PluginMessageListener {
     }
 
     private void sendMessage(String pluginChannel, String message) {
+        //Check vor players that toggled the global chat
         if (!pluginChannel.equals("Global")) {
             Bukkit.broadcast(message, "simplechat." + pluginChannel.toLowerCase());
         } else {

@@ -43,6 +43,7 @@ public class SimpleChatListener implements Listener {
     /**
      * Bukkit Logger.
      */
+    @SuppressWarnings("unused")
     private static Logger log    = Logger.getLogger("Minecraft");
     /**
      * NextVote Plugin.
@@ -87,44 +88,7 @@ public class SimpleChatListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChatEvent(final AsyncPlayerChatEvent event) {
-        ChatMessage chatMessage = new ChatMessage(event, plugin);
-
-        // event.getPlayer().sendPluginMessage(plugin, "SimpleChat", message.getBytes());
-        //
-        // String pMsg = Utils.replacePlayerName(plugin.config.getServer(), Bukkit.getPlayer(event.getPlayer().getName()), plugin.chat.getPlayerPrefix(Bukkit.getPlayer(event.getPlayer().getName())), message.substring(1).trim());
-        // // String pMsg = event.getPlayer().getName() + "@#@" + event.getPlayer().getDisplayName() + "@#@" + event.getFormat() + "@#@" + event.getMessage();
-        // event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
-        // Bukkit.broadcastMessage(pMsg);
-        // event.setCancelled(true);
-
-        // if (pm && length > 2) {
-        // message = message.substring(1).trim();
-        // String[] parts = message.split(" ");
-        // message = message.substring(parts[0].length()).trim();
-        // String msg = Utils.replaceFrom(plugin.config.getSrvpm(), event.getPlayer().getName(), plugin);
-        // String pMsg = "@#@" + event.getPlayer().getName() + "@#@" + parts[0] + "@#@" + msg + "@#@" + message;
-        // event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
-        // event.setCancelled(true);
-        // }
-        //
-        // if (!plugin.herochat) {
-        // if (server && length > 2) {
-        // String pMsg = Utils.replacePlayerName(plugin.config.getServer(), Bukkit.getPlayer(event.getPlayer().getName()), plugin.chat.getPlayerPrefix(Bukkit.getPlayer(event.getPlayer().getName())), message.substring(1).trim());
-        // // String pMsg = event.getPlayer().getName() + "@#@" + event.getPlayer().getDisplayName() + "@#@" + event.getFormat() + "@#@" + event.getMessage();
-        // event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
-        // Bukkit.broadcastMessage(pMsg);
-        // event.setCancelled(true);
-        // }
-        // if (help && length > 2) {
-        // String pMsg = Utils.replacePlayerName(plugin.config.getHilfe(), Bukkit.getPlayer(event.getPlayer().getName()), plugin.chat.getPlayerPrefix(Bukkit.getPlayer(event.getPlayer().getName())), message.substring(1).trim());
-        // // String pMsg = event.getPlayer().getName() + "@#@" + event.getPlayer().getDisplayName() + "@#@" + event.getFormat() + "@#@" + event.getMessage();
-        // event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
-        // Bukkit.broadcastMessage(pMsg);
-        // event.setCancelled(true);
-        // }
-        //
-        // }
-
+        new ChatMessage(event, plugin);
     }
 
 }
