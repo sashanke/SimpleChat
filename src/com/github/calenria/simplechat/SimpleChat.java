@@ -24,12 +24,11 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -101,13 +100,13 @@ public class SimpleChat extends JavaPlugin {
      * Vault Economy.
      */
     private Economy                        economy    = null;
-    private volatile List<String>          currOnline = new ArrayList<String>();
+    private Vector<String>                 currOnline = new Vector<String>();
 
     /**
      * @param currOnline
      *            the currOnline to set
      */
-    public void setCurrOnline(List<String> currOnline) {
+    public void setCurrOnline(Vector<String> currOnline) {
         this.currOnline = currOnline;
     }
 
@@ -238,7 +237,7 @@ public class SimpleChat extends JavaPlugin {
             }
             PreparedStatement pstmPlayers = getMysql().prepare(SELECT_STM);
             ResultSet rs = pstmPlayers.executeQuery();
-            List<String> players = new ArrayList<String>();
+            Vector<String> players = new Vector<String>();
             while (rs.next()) {
                 players.add(rs.getString("player"));
             }
