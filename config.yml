@@ -12,7 +12,7 @@ name: '<player>'
 debug: false
 mysql:
   user: root
-  password: 
+  password: password
   hostname: localhost
   database: skymine
   port: 3306
