@@ -63,18 +63,18 @@ import com.sk89q.minecraft.util.commands.WrappedCommandException;
  * SimpleChat ein BukkitPlugin zum verteilen von Vote Belohnungen.
  * 
  * @author Calenria
- * @param <listener>
  */
 public class SimpleChat extends JavaPlugin {
-    public static final String REPLACE_STM    = "REPLACE INTO skymine_online_player (`player`, `player_ds`, `x`, `y`, `z`, `world`, `server`, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    public static final String REMOVE_STM     = "DELETE FROM skymine_online_player where `player` = ? and server = ?";
+    public static final String REPLACE_STM               = "REPLACE INTO skymine_online_player (`player`, `player_ds`, `x`, `y`, `z`, `world`, `server`, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String REMOVE_STM                = "DELETE FROM skymine_online_player where `player` = ? and server = ?";
 
-    public static final String SELECT_STM     = "SELECT * FROM skymine_online_player";
-    public static final String SELECT_SERVERS = "SELECT server FROM skymine_online_player GROUP BY server";
+    public static final String SELECT_STM                = "SELECT * FROM skymine_online_player";
+    public static final String SELECT_SERVERS            = "SELECT server FROM skymine_online_player GROUP BY `server`";
+    public static final String SELECT_PLAYERS_PER_SERVER = "SELECT * FROM skymine_online_player where `server` = ?";
     /**
      * Standart Bukkit Logger.
      */
-    private static Logger      log            = Logger.getLogger("Minecraft");
+    private static Logger      log                       = Logger.getLogger("Minecraft");
 
     /**
      * Vault Economy.
@@ -131,11 +131,8 @@ public class SimpleChat extends JavaPlugin {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
             }
-
         }
-
     }
 
     public void setupSheduler() {
@@ -170,27 +167,24 @@ public class SimpleChat extends JavaPlugin {
         }, 6000L, 6000L);
     }
 
-    public void online(String[] args, CommandSender sender) {
-
+    public void online(CommandSender sender) {
         try {
             if (!getMysql().checkConnection()) {
                 getMysql().open();
             }
-
             PreparedStatement serverps = getMysql().prepare(SELECT_SERVERS);
             ResultSet servers = serverps.executeQuery();
             while (servers.next()) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "Spieler auf " + servers.getString("server")));
-                PreparedStatement pstm = getMysql().prepare(SELECT_STM);
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2Spieler auf &4[&6" + servers.getString("server") + "&4]"));
+                PreparedStatement pstm = getMysql().prepare(SELECT_PLAYERS_PER_SERVER);
+                pstm.setString(1, servers.getString("server"));
                 ResultSet rs = pstm.executeQuery();
                 String playerlist = "";
                 while (rs.next()) {
                     playerlist += rs.getString("player_ds") + ", ";
                 }
-
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', playerlist.substring(0, playerlist.length() - 2)));
             }
-
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -381,16 +375,6 @@ public class SimpleChat extends JavaPlugin {
      */
     public final ResourceBundle getMessages() {
         return messages;
-    }
-
-    /**
-     * Installiert die Datenbank.
-     * 
-     * @see org.bukkit.plugin.java.JavaPlugin#installDDL()
-     */
-    @Override
-    public final void installDDL() {
-        super.installDDL();
     }
 
     /**

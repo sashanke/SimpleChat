@@ -22,12 +22,41 @@ public class SimpleChatCommands {
     final private SimpleChat plugin;
 
     /**
-     * @param nvPlugin
-     *            Plugin
+     * @param scPlugin
+     *            SimpleChat Plugin
      * @return
      */
-    public SimpleChatCommands(final SimpleChat nvPlugin) {
-        this.plugin = nvPlugin;
+    public SimpleChatCommands(final SimpleChat scPlugin) {
+        this.plugin = scPlugin;
+    }
+
+    @Command(aliases = { "globalchat" }, desc = "Blendet den Globalen Chat aus", usage = "", min = 0, max = 0)
+    public final void globalchat(final CommandContext args, final CommandSender sender) throws CommandException {
+        Player player = Bukkit.getPlayer(sender.getName());
+        if (player.hasPermission("simplechat.gobal.off")) {
+            plugin.getPermission().playerRemove(player, "simplechat.gobal.off");
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Globalen Chat betreten, tippe &4/globalchat&6 erneut um den Globalen Chat zu verlassen!"));
+        } else {
+            plugin.getPermission().playerAdd(player, "simplechat.gobal.off");
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Globalen Chat verlassen, tippe &4/globalchat&6 erneut um wieder im Globalen Chat lesen und schreiben zu dürfen!"));
+        }
+    }
+
+    // online(args, sender);
+    @Command(aliases = { "list", "online" }, desc = "Gibt eine Liste der Spieler auf allen Servern aus")
+    // @CommandPermissions("simplechat.list")
+    public final void olist(final CommandContext args, final CommandSender sender) throws CommandException {
+        plugin.online(sender);
+    }
+
+    @Command(aliases = { "rep", "r", "reply" }, desc = "Antwortet einem Spieler der dir zuvor geschrieben hat", usage = "nachricht")
+    @CommandPermissions("simplechat.privat")
+    public final void rep(final CommandContext args, final CommandSender sender) throws CommandException {
+        if (plugin.getChatter(sender.getName()).isLastWhisper()) {
+            AsyncPlayerChatEvent chatEvent = new AsyncPlayerChatEvent(false, Bukkit.getPlayer(sender.getName()), "@" + plugin.getChatter(sender.getName()).getLastWhisperFrom() + " " + args.getJoinedStrings(0), new HashSet<Player>(Arrays.asList(Bukkit.getOnlinePlayers())));
+            chatEvent.setFormat("%1$s -> %2$s");
+            Bukkit.getServer().getPluginManager().callEvent(chatEvent);
+        }
     }
 
     @Command(aliases = { "w", "tell", "msg" }, desc = "Flüstert mit einem Spieler. Ohne Nachricht benutzen um eine Privaten Kanal zu erstellen", usage = "spieler [nachricht]")
@@ -59,28 +88,6 @@ public class SimpleChatCommands {
             AsyncPlayerChatEvent chatEvent = new AsyncPlayerChatEvent(false, Bukkit.getPlayer(sender.getName()), "@" + args.getString(0) + " " + args.getJoinedStrings(1), new HashSet<Player>(Arrays.asList(Bukkit.getOnlinePlayers())));
             chatEvent.setFormat("%1$s -> %2$s");
             Bukkit.getServer().getPluginManager().callEvent(chatEvent);
-        }
-    }
-
-    @Command(aliases = { "rep", "r", "reply" }, desc = "Antwortet einem Spieler der dir zuvor geschrieben hat", usage = "nachricht")
-    @CommandPermissions("simplechat.privat")
-    public final void rep(final CommandContext args, final CommandSender sender) throws CommandException {
-        if (plugin.getChatter(sender.getName()).isLastWhisper()) {
-            AsyncPlayerChatEvent chatEvent = new AsyncPlayerChatEvent(false, Bukkit.getPlayer(sender.getName()), "@" + plugin.getChatter(sender.getName()).getLastWhisperFrom() + " " + args.getJoinedStrings(0), new HashSet<Player>(Arrays.asList(Bukkit.getOnlinePlayers())));
-            chatEvent.setFormat("%1$s -> %2$s");
-            Bukkit.getServer().getPluginManager().callEvent(chatEvent);
-        }
-    }
-
-    @Command(aliases = { "globalchat" }, desc = "Blendet den Globalen Chat aus", usage = "", min = 0, max = 0)
-    public final void globalchat(final CommandContext args, final CommandSender sender) throws CommandException {
-        Player player = Bukkit.getPlayer(sender.getName());
-        if (player.hasPermission("simplechat.gobal.off")) {
-            plugin.getPermission().playerRemove(player, "simplechat.gobal.off");
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Globalen Chat betreten, tippe &4/globalchat&6 erneut um den Globalen Chat zu verlassen!"));
-        } else {
-            plugin.getPermission().playerAdd(player, "simplechat.gobal.off");
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Globalen Chat verlassen, tippe &4/globalchat&6 erneut um wieder im Globalen Chat lesen und schreiben zu dürfen!"));
         }
     }
 }
