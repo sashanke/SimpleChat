@@ -179,7 +179,9 @@ public class ChatMessage {
         }
         toFormat = toFormat.replace("<player>", to);
         parsedMessage = parsedMessage.replace("<to>", toFormat);
-        return ChatColor.translateAlternateColorCodes('&', parsedMessage);
+        parsedMessage = ChatColor.translateAlternateColorCodes('&', parsedMessage);
+        log.info(parsedMessage);
+        return parsedMessage;
     }
 
     private void sendServerTeamMessage() {
@@ -187,6 +189,7 @@ public class ChatMessage {
         String pMsg = "@#@message@#@" + server + "@#@" + channel + "@#@" + sender.getName() + "@#@" + this.formatParsed;
         event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
         Bukkit.broadcast(this.formatParsed, "simplechat." + channel.toLowerCase());
+        log.info(this.formatParsed);
     }
 
     private void sendSpyMessage() {
@@ -205,7 +208,7 @@ public class ChatMessage {
                 player.sendMessage(this.formatParsed);
             }
         }
-
+        log.info(this.formatParsed);
     }
 
     private String setChannel() {
@@ -391,7 +394,7 @@ public class ChatMessage {
         if (cnt <= 1) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Keiner hört dich..."));
         }
-
+        log.info(this.event.getFormat());
     }
 
     private String setFormat() {

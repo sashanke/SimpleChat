@@ -9,6 +9,7 @@ srvpm: '&d<prefix><group> <from><suffix> &d-> <to>&d: <msg>'
 to: '<prefix><group> <player><suffix>'
 radius: 100
 name: '<player>'
+debug: false
 mysql:
   user: root
   password: 

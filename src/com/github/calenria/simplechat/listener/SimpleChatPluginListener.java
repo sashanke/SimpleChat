@@ -58,7 +58,9 @@ public class SimpleChatPluginListener implements PluginMessageListener {
         if (!channel.equals("SimpleChat"))
             return;
         String pluginMessage = new String(byteMessage);
-        log.info("Recived plugin message: " + pluginMessage);
+        if (plugin.config.getDebug()) {
+            log.info("Recived plugin message: " + pluginMessage);
+        }
 
         StringTokenizer st = new StringTokenizer(pluginMessage, "@#@");
         String type = st.nextToken();
@@ -79,7 +81,9 @@ public class SimpleChatPluginListener implements PluginMessageListener {
         }
 
         String serverName = st.nextToken();
-        log.info("Message From Servername: " + serverName);
+        if (plugin.config.getDebug()) {
+            log.info("Message From Servername: " + serverName);
+        }
         if (st.hasMoreTokens()) {
             String pluginChannel = st.nextToken();
             @SuppressWarnings("unused")

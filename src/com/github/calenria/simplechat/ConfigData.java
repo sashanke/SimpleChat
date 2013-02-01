@@ -47,6 +47,8 @@ public class ConfigData {
     private String password;
     private String praefix;
 
+    private Boolean debug;
+    
     /**
      * @param plugin
      *            SimpleChat Plugin
@@ -72,6 +74,8 @@ public class ConfigData {
         setDatabase(config.getString("mysql.database"));
         setPraefix(config.getString("mysql.praefix"));
         setPort(config.getInt("mysql.port"));
+        
+        setDebug(config.getBoolean("debug"));
     }
 
     /**
@@ -327,5 +331,19 @@ public class ConfigData {
      */
     public void setPort(int port) {
         this.port = port;
+    }
+
+    /**
+     * @return the debug
+     */
+    public Boolean getDebug() {
+        return debug;
+    }
+
+    /**
+     * @param debug the debug to set
+     */
+    public void setDebug(Boolean debug) {
+        this.debug = debug;
     }
 }
