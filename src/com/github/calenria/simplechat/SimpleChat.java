@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lib.PatPeter.SQLibrary.MySQL;
 import me.zford.jobs.bukkit.JobsPlugin;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -39,6 +43,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -61,18 +66,22 @@ import com.sk89q.minecraft.util.commands.WrappedCommandException;
  * @param <listener>
  */
 public class SimpleChat extends JavaPlugin {
+    public static final String REPLACE_STM    = "REPLACE INTO skymine_online_player (`player`, `player_ds`, `x`, `y`, `z`, `world`, `server`, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String REMOVE_STM     = "DELETE FROM skymine_online_player where `player` = ? and server = ?";
 
+    public static final String SELECT_STM     = "SELECT * FROM skymine_online_player";
+    public static final String SELECT_SERVERS = "SELECT server FROM skymine_online_player GROUP BY server";
     /**
      * Standart Bukkit Logger.
      */
-    private static Logger log = Logger.getLogger("Minecraft");
+    private static Logger      log            = Logger.getLogger("Minecraft");
 
     /**
      * Vault Economy.
      * 
      * @return the economy
      */
-    public static Economy getEconomy() {
+    public Economy getEconomy() {
         return economy;
     }
 
@@ -84,14 +93,185 @@ public class SimpleChat extends JavaPlugin {
     /**
      * Vault Permissions.
      */
-    private static Permission              permission = null;
+    private Permission                     permission = null;
+    private MySQL                          mysql;
 
+    private String                         table;
     /**
      * Vault Economy.
      */
-    private static Economy                 economy    = null;
+    private Economy                        economy    = null;
+    private List<String>                   currOnline = new ArrayList<String>();
 
-    public Map<String, Chatter>            chatters   = new HashMap<String, Chatter>();
+    /**
+     * @param currOnline
+     *            the currOnline to set
+     */
+    public synchronized void setCurrOnline(List<String> currOnline) {
+        this.currOnline = currOnline;
+    }
+
+    public void reConSql() {
+        setMysql(new MySQL(log, config.getPraefix(), config.getHostname(), config.getPort(), config.getDatabase(), config.getUser(), config.getPassword()));
+    }
+
+    private void initSql() {
+        setMysql(new MySQL(log, config.getPraefix(), config.getHostname(), config.getPort(), config.getDatabase(), config.getUser(), config.getPassword()));
+        if (getMysql().open()) {
+            log.log(Level.INFO, String.format("[%s] Database enabled %s", getDescription().getName(), getDescription().getVersion()));
+            setTable(config.getPraefix() + "online_player");
+            if (!getMysql().isTable(getTable())) {
+                log.log(Level.INFO, String.format("[%s] Installing Table %s", getDescription().getName(), getTable()));
+                try {
+                    getMysql()
+                            .query("CREATE TABLE `"
+                                    + getTable()
+                                    + "` (`player` VARCHAR(50) NULL DEFAULT NULL, `player_ds` VARCHAR(50) NULL DEFAULT NULL, `x` DOUBLE NULL DEFAULT NULL, `y` DOUBLE NULL DEFAULT NULL,    `z` DOUBLE NULL DEFAULT NULL,    `world` VARCHAR(50) NULL DEFAULT NULL,    `server` VARCHAR(50) NULL DEFAULT NULL,    `group` VARCHAR(50) NULL DEFAULT NULL,    PRIMARY KEY (`player`),    UNIQUE INDEX `UNIQUE_PLAYER` (`player`)) COMMENT='Tabelle mit Spielern die auf allen Servern Online sind.' COLLATE='utf8_general_ci' ENGINE=InnoDB");
+                } catch (SQLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
+
+    }
+
+    public void setupSheduler() {
+        getServer().getScheduler().runTaskTimer(this, new Runnable() {
+            public void run() {
+                Player[] players = Bukkit.getOnlinePlayers();
+                try {
+                    if (!getMysql().checkConnection()) {
+                        getMysql().open();
+                    }
+                    PreparedStatement pstm = getMysql().prepare(REPLACE_STM);
+                    for (Player player : players) {
+                        pstm.setString(1, player.getName());
+
+                        pstm.setString(2, parseName(player));
+                        pstm.setDouble(3, player.getLocation().getX());
+                        pstm.setDouble(4, player.getLocation().getY());
+                        pstm.setDouble(5, player.getLocation().getZ());
+                        pstm.setString(6, player.getWorld().getName());
+                        pstm.setString(7, config.getServer());
+                        try {
+                            pstm.setString(8, getPermission().getPrimaryGroup(player));
+                        } catch (UnsupportedOperationException e) {
+                            pstm.setString(8, "Undefiniert");
+                        }
+                        pstm.executeUpdate();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 6000L, 6000L);
+    }
+
+    public void online(String[] args, CommandSender sender) {
+
+        try {
+            if (!getMysql().checkConnection()) {
+                getMysql().open();
+            }
+
+            PreparedStatement serverps = getMysql().prepare(SELECT_SERVERS);
+            ResultSet servers = serverps.executeQuery();
+            while (servers.next()) {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "Spieler auf " + servers.getString("server")));
+                PreparedStatement pstm = getMysql().prepare(SELECT_STM);
+                ResultSet rs = pstm.executeQuery();
+                String playerlist = "";
+                while (rs.next()) {
+                    playerlist += rs.getString("player_ds") + ", ";
+                }
+
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', playerlist.substring(0, playerlist.length() - 2)));
+            }
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * @return the table
+     */
+    public String getTable() {
+        return table;
+    }
+
+    /**
+     * @param table
+     *            the table to set
+     */
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    /**
+     * @return the mysql
+     */
+    public MySQL getMysql() {
+        return mysql;
+    }
+
+    /**
+     * @param mysql
+     *            the mysql to set
+     */
+    public void setMysql(MySQL mysql) {
+        this.mysql = mysql;
+    }
+
+    /**
+     * @param currOnline
+     *            the currOnline to set
+     */
+    public synchronized void updateCurrOnline() {
+        try {
+            try {
+                if (!getMysql().checkConnection()) {
+                    getMysql().open();
+                }
+            } catch (Exception e) {
+                reConSql();
+                getMysql().open();
+            }
+            PreparedStatement pstmPlayers = getMysql().prepare(SELECT_STM);
+            ResultSet rs = pstmPlayers.executeQuery();
+            List<String> players = new ArrayList<String>();
+            while (rs.next()) {
+                players.add(rs.getString("player"));
+            }
+            setCurrOnline(players);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @return the currOnline
+     */
+    public synchronized String getOnlinePlayer(String name) {
+        if (currOnline.contains(name)) {
+            return name;
+        } else {
+            for (String onlinePlayer : currOnline) {
+                if (onlinePlayer.toLowerCase().startsWith(name.toLowerCase())) {
+                    return onlinePlayer;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public Map<String, Chatter> chatters = new HashMap<String, Chatter>();
 
     /**
      * @return the chatters
@@ -148,28 +328,23 @@ public class SimpleChat extends JavaPlugin {
      * 
      * @return the permission
      */
-    public static Permission getPermission() {
+    public Permission getPermission() {
         return permission;
     }
 
     /**
      * ResourceBundle der I18N Strings.
      */
-    private ResourceBundle    messages  = null;
+    private ResourceBundle    messages = null;
     /**
      * ResourceBundle der I18N Item Namen.
      */
-    private ResourceBundle    items     = null;
-
-    /**
-     * Liste der heutigen Votes.
-     */
-    private List<String>      currVotes = new ArrayList<String>();
+    private ResourceBundle    items    = null;
 
     /**
      * String der gewählten Sprache.
      */
-    private String            lang      = "de";
+    private String            lang     = "de";
 
     public SimpleChatListener listener;
 
@@ -177,28 +352,9 @@ public class SimpleChat extends JavaPlugin {
 
     public ConfigData         config;
 
-    public static boolean     jobs      = false;
+    public static boolean     jobs     = false;
 
     public static JobsPlugin  jobsPlugin;
-
-    /**
-     * Fügt einen Spielervote zur heutigen liste hinzu.
-     * 
-     * @param vote
-     *            Spielername
-     */
-    public final synchronized void addVote(final String vote) {
-        this.currVotes.add(vote);
-    }
-
-    /**
-     * Lister der heutigen Spielervotes.
-     * 
-     * @return the currVotes
-     */
-    public final synchronized List<String> getCurrVotes() {
-        return currVotes;
-    }
 
     /**
      * Gibt ein ResourceBundle mit Itemstrings zurück (items_(lang).properties).
@@ -282,6 +438,18 @@ public class SimpleChat extends JavaPlugin {
      */
     @Override
     public final void onDisable() {
+        String sql = "DELETE FROM skymine_online_player where server = ?";
+        try {
+            if (!getMysql().checkConnection()) {
+                getMysql().open();
+            }
+            PreparedStatement pstm = getMysql().prepare(sql);
+            pstm.setString(1, config.getServer());
+            pstm.executeUpdate();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         log.log(Level.INFO, String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
     }
 
@@ -305,6 +473,21 @@ public class SimpleChat extends JavaPlugin {
         setupCommands();
         setupListeners();
         setupConfig();
+        initSql();
+
+        String sql = "DELETE FROM skymine_online_player where server = ?";
+        try {
+            if (!getMysql().checkConnection()) {
+                getMysql().open();
+            }
+            PreparedStatement pstm = getMysql().prepare(sql);
+            pstm.setString(1, config.getServer());
+            pstm.executeUpdate();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "SimpleChat");
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "SimpleChat", new SimpleChatPluginListener(this));
 
@@ -342,17 +525,6 @@ public class SimpleChat extends JavaPlugin {
             e.printStackTrace();
         }
         return bundle;
-    }
-
-    /**
-     * Setzt die Liste der heutigen Spielervotes.
-     * 
-     * @param currentVotes
-     *            Liste mit Spielern die heute bereits gevotet haben
-     * 
-     */
-    public final synchronized void setCurrVotes(final List<String> currentVotes) {
-        this.currVotes = currentVotes;
     }
 
     /**
@@ -396,10 +568,8 @@ public class SimpleChat extends JavaPlugin {
         };
 
         commands.setInjector(new SimpleInjector(this));
-
         CommandsManagerRegistration cmdRegister = new CommandsManagerRegistration(this, this.commands);
         cmdRegister.register(SimpleChatCommands.class);
-
     }
 
     /**
@@ -453,4 +623,70 @@ public class SimpleChat extends JavaPlugin {
         return (permission != null);
     }
 
+    public void removePlayer(final Player player) {
+        try {
+            try {
+                if (!getMysql().checkConnection()) {
+                    getMysql().open();
+                }
+            } catch (Exception e) {
+                reConSql();
+                getMysql().open();
+            }
+            PreparedStatement pstm = getMysql().prepare(SimpleChat.REMOVE_STM);
+            pstm.setString(1, player.getName());
+            pstm.setString(2, config.getServer());
+            pstm.executeUpdate();
+
+            updateCurrOnline();
+
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void addPlayer(final Player player) {
+        try {
+            try {
+                if (!getMysql().checkConnection()) {
+                    getMysql().open();
+                }
+            } catch (Exception e) {
+                reConSql();
+                getMysql().open();
+            }
+            PreparedStatement pstm = getMysql().prepare(SimpleChat.REPLACE_STM);
+            pstm.setString(1, player.getName());
+            pstm.setString(2, parseName(player));
+            pstm.setDouble(3, player.getLocation().getX());
+            pstm.setDouble(4, player.getLocation().getY());
+            pstm.setDouble(5, player.getLocation().getZ());
+            pstm.setString(6, player.getWorld().getName());
+            pstm.setString(7, config.getServer());
+            try {
+                pstm.setString(8, getPermission().getPrimaryGroup(player));
+            } catch (UnsupportedOperationException e) {
+                pstm.setString(8, "Undefiniert");
+            }
+            pstm.executeUpdate();
+            updateCurrOnline();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public String parseName(Player player) {
+        String name = config.getName();
+        name = name.replace("<player>", player.getName());
+        name = name.replace("<playerdn>", player.getDisplayName());
+        name = name.replace("<server>", config.getServer());
+        if (chat != null) {
+            name = name.replace("<prefix>", chat.getPlayerPrefix(player));
+            name = name.replace("<suffix>", chat.getPlayerSuffix(player));
+            name = name.replace("<group>", chat.getPrimaryGroup(player));
+        }
+        return name;
+    }
 }

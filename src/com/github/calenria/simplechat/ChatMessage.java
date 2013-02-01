@@ -13,8 +13,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.github.calenria.bungeetools.zBungeeTools;
-
 public class ChatMessage {
 
     /**
@@ -122,7 +120,7 @@ public class ChatMessage {
             String parsedMessage = message.substring(2).trim();
             StringTokenizer st = new StringTokenizer(parsedMessage, " ");
             String conversionPartner = st.nextToken();
-            String cPlayer = zBungeeTools.getOnlinePlayer(conversionPartner);
+            String cPlayer = plugin.getOnlinePlayer(conversionPartner);
             if (cPlayer == null) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
                 return;
@@ -147,7 +145,7 @@ public class ChatMessage {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
             return;
         }
-        String cPlayer = zBungeeTools.getOnlinePlayer(conversionPartner);
+        String cPlayer = plugin.getOnlinePlayer(conversionPartner);
         if (cPlayer == null) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
             return;

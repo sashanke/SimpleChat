@@ -24,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.github.calenria.bungeetools.zBungeeTools;
 import com.github.calenria.simplechat.Chatter;
 import com.github.calenria.simplechat.SimpleChat;
 
@@ -65,7 +64,7 @@ public class SimpleChatPluginListener implements PluginMessageListener {
         String type = st.nextToken();
 
         if (type.equals("ping")) {
-            zBungeeTools.updateCurrOnline();
+            plugin.updateCurrOnline();
             return;
         }
 
@@ -91,7 +90,7 @@ public class SimpleChatPluginListener implements PluginMessageListener {
     }
 
     private void sendMessage(String pluginChannel, String message) {
-        //Check vor players that toggled the global chat
+        // Check vor players that toggled the global chat
         if (!pluginChannel.equals("Global")) {
             Bukkit.broadcast(message, "simplechat." + pluginChannel.toLowerCase());
         } else {

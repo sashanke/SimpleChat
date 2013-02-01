@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import com.github.calenria.bungeetools.zBungeeTools;
 import com.github.calenria.simplechat.SimpleChat;
 import com.sk89q.minecraft.util.commands.Command;
 import com.sk89q.minecraft.util.commands.CommandContext;
@@ -41,7 +40,7 @@ public class SimpleChatCommands {
         }
 
         if (args.argsLength() == 1 && !plugin.getChatter(sender.getName()).isConversion()) {
-            String cPlayer = zBungeeTools.getOnlinePlayer(args.getString(0));
+            String cPlayer = plugin.getOnlinePlayer(args.getString(0));
             if (cPlayer == null) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + args.getString(0) + ")"));
                 return;
@@ -77,10 +76,10 @@ public class SimpleChatCommands {
     public final void globalchat(final CommandContext args, final CommandSender sender) throws CommandException {
         Player player = Bukkit.getPlayer(sender.getName());
         if (player.hasPermission("simplechat.gobal.off")) {
-            SimpleChat.getPermission().playerRemove(player, "simplechat.gobal.off");
+            plugin.getPermission().playerRemove(player, "simplechat.gobal.off");
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Globalen Chat betreten, tippe &4/globalchat&6 erneut um den Globalen Chat zu verlassen!"));
         } else {
-            SimpleChat.getPermission().playerAdd(player, "simplechat.gobal.off");
+            plugin.getPermission().playerAdd(player, "simplechat.gobal.off");
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Globalen Chat verlassen, tippe &4/globalchat&6 erneut um wieder im Globalen Chat lesen und schreiben zu dürfen!"));
         }
     }

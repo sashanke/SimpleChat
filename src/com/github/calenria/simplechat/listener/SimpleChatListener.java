@@ -46,18 +46,18 @@ public class SimpleChatListener implements Listener {
     @SuppressWarnings("unused")
     private static Logger log    = Logger.getLogger("Minecraft");
     /**
-     * NextVote Plugin.
+     * SimpleChat Plugin.
      */
     private SimpleChat    plugin = null;
 
     /**
-     * Registriert die Eventhandler und erstellt die Datenbank falls nicht vorhanden.
+     * Registriert die Eventhandler
      * 
-     * @param nvPlugin
-     *            NextVote Plugin
+     * @param scPlugin
+     *            SimpleChat Plugin
      */
-    public SimpleChatListener(final SimpleChat nvPlugin) {
-        this.plugin = nvPlugin;
+    public SimpleChatListener(final SimpleChat scPlugin) {
+        this.plugin = scPlugin;
         Bukkit.getPluginManager().registerEvents(this, this.plugin);
     }
 
@@ -65,6 +65,7 @@ public class SimpleChatListener implements Listener {
     public void onPlayerJoinEvent(final PlayerJoinEvent event) {
         final Player sPlayer = event.getPlayer();
         event.setJoinMessage(null);
+        plugin.addPlayer(sPlayer);
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
@@ -79,11 +80,13 @@ public class SimpleChatListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerQuitEvent(final PlayerQuitEvent event) {
         event.setQuitMessage(null);
+        plugin.removePlayer(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerKickEvent(final PlayerKickEvent event) {
         event.setLeaveMessage(null);
+        plugin.removePlayer(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

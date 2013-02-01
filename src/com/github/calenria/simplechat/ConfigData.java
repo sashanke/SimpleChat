@@ -38,6 +38,15 @@ public class ConfigData {
     private String to;
     private Long   radius;
 
+    private String name;
+
+    private String hostname;
+    private int    port;
+    private String database;
+    private String user;
+    private String password;
+    private String praefix;
+
     /**
      * @param plugin
      *            SimpleChat Plugin
@@ -55,6 +64,14 @@ public class ConfigData {
         setPmSpy(config.getString("pmspy"));
         setRadius(config.getLong("radius"));
         setTo(config.getString("to"));
+
+        setName(config.getString("name"));
+        setUser(config.getString("mysql.user"));
+        setPassword(config.getString("mysql.password"));
+        setHostname(config.getString("mysql.hostname"));
+        setDatabase(config.getString("mysql.database"));
+        setPraefix(config.getString("mysql.praefix"));
+        setPort(config.getInt("mysql.port"));
     }
 
     /**
@@ -207,4 +224,108 @@ public class ConfigData {
         this.to = to;
     }
 
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the user
+     */
+    public String getUser() {
+        return user;
+    }
+
+    /**
+     * @param user
+     *            the user to set
+     */
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password
+     *            the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the hostname
+     */
+    public String getHostname() {
+        return hostname;
+    }
+
+    /**
+     * @param hostname
+     *            the hostname to set
+     */
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    /**
+     * @return the database
+     */
+    public String getDatabase() {
+        return database;
+    }
+
+    /**
+     * @param database
+     *            the database to set
+     */
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    /**
+     * @return the praefix
+     */
+    public String getPraefix() {
+        return praefix;
+    }
+
+    /**
+     * @param praefix
+     *            the praefix to set
+     */
+    public void setPraefix(String praefix) {
+        this.praefix = praefix;
+    }
+
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * @param port
+     *            the port to set
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
 }
