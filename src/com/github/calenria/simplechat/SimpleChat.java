@@ -101,13 +101,13 @@ public class SimpleChat extends JavaPlugin {
      * Vault Economy.
      */
     private Economy                        economy    = null;
-    private List<String>                   currOnline = new ArrayList<String>();
+    private volatile List<String>          currOnline = new ArrayList<String>();
 
     /**
      * @param currOnline
      *            the currOnline to set
      */
-    public synchronized void setCurrOnline(List<String> currOnline) {
+    public void setCurrOnline(List<String> currOnline) {
         this.currOnline = currOnline;
     }
 
@@ -226,7 +226,7 @@ public class SimpleChat extends JavaPlugin {
      * @param currOnline
      *            the currOnline to set
      */
-    public synchronized void updateCurrOnline() {
+    public void updateCurrOnline() {
         try {
             try {
                 if (!getMysql().checkConnection()) {
@@ -251,7 +251,7 @@ public class SimpleChat extends JavaPlugin {
     /**
      * @return the currOnline
      */
-    public synchronized String getOnlinePlayer(String name) {
+    public String getOnlinePlayer(String name) {
         if (currOnline.contains(name)) {
             return name;
         } else {
@@ -265,12 +265,12 @@ public class SimpleChat extends JavaPlugin {
         return null;
     }
 
-    public Map<String, Chatter> chatters = new HashMap<String, Chatter>();
+    public volatile Map<String, Chatter> chatters = new HashMap<String, Chatter>();
 
     /**
      * @return the chatters
      */
-    public synchronized Chatter getChatter(String name) {
+    public Chatter getChatter(String name) {
         if (chatters.containsKey(name)) {
             return chatters.get(name);
         }
@@ -281,7 +281,7 @@ public class SimpleChat extends JavaPlugin {
      * @param chatters
      *            the chatters to set
      */
-    public synchronized void setChatter(Chatter chatter) {
+    public void setChatter(Chatter chatter) {
         this.chatters.put(chatter.getName(), chatter);
     }
 
@@ -289,7 +289,7 @@ public class SimpleChat extends JavaPlugin {
      * @param chatters
      *            the chatters to set
      */
-    public synchronized void setConversionPartner(String name, String conversionPartner) {
+    public void setConversionPartner(String name, String conversionPartner) {
         if (chatters.containsKey(name)) {
             Chatter c = chatters.get(name);
             c.setConversionPartner(conversionPartner);
@@ -302,7 +302,7 @@ public class SimpleChat extends JavaPlugin {
      * @param chatters
      *            the chatters to set
      */
-    public synchronized void removeConversionPartner(String name) {
+    public void removeConversionPartner(String name) {
         if (chatters.containsKey(name)) {
             Chatter c = chatters.get(name);
             c.removeConversionPartner();
@@ -311,7 +311,7 @@ public class SimpleChat extends JavaPlugin {
         }
     }
 
-    public synchronized void removeChatter(String chatter) {
+    public void removeChatter(String chatter) {
         if (chatters.containsKey(chatter)) {
             chatters.remove(chatter);
         }
@@ -330,10 +330,6 @@ public class SimpleChat extends JavaPlugin {
      * ResourceBundle der I18N Strings.
      */
     private ResourceBundle    messages = null;
-    /**
-     * ResourceBundle der I18N Item Namen.
-     */
-    private ResourceBundle    items    = null;
 
     /**
      * String der gewählten Sprache.
@@ -349,15 +345,6 @@ public class SimpleChat extends JavaPlugin {
     public static boolean     jobs     = false;
 
     public static JobsPlugin  jobsPlugin;
-
-    /**
-     * Gibt ein ResourceBundle mit Itemstrings zurück (items_(lang).properties).
-     * 
-     * @return the items
-     */
-    public final ResourceBundle getItems() {
-        return items;
-    }
 
     /**
      * Die aktuell gewählte Sprache.
@@ -509,16 +496,6 @@ public class SimpleChat extends JavaPlugin {
             e.printStackTrace();
         }
         return bundle;
-    }
-
-    /**
-     * Setzt das ResourceBundle der Itemnamen.
-     * 
-     * @param rbItems
-     *            ResourceBundle mit Itemnamen
-     */
-    public final void setItems(final ResourceBundle rbItems) {
-        this.items = rbItems;
     }
 
     /**
