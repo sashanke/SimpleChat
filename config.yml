@@ -7,6 +7,7 @@ spy: '&7[&4Spy&7] [&4<server>&7] &f<prefix><group> <player><suffix>&7: <msg>'
 pmspy: '&8[&4PmSpy&8] [&4<server>] &d<prefix><group> <from><suffix> &d-> <to>&d: <msg>'
 srvpm: '&d<prefix><group> <from><suffix> &d-> <to>&d: <msg>'
 to: '<prefix><group> <player><suffix>'
+lokalchat: false 
 radius: 100
 name: '<player>'
 debug: false

@@ -27,28 +27,29 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public class ConfigData {
 
-    private String server;
-    private String hilfe;
-    private String srvpm;
-    private String global;
-    private String team;
-    private String lokal;
-    private String spy;
-    private String pmSpy;
-    private String to;
-    private Long   radius;
+    private String  server;
+    private String  hilfe;
+    private String  srvpm;
+    private String  global;
+    private String  team;
+    private String  lokal;
+    private String  spy;
+    private String  pmSpy;
+    private String  to;
+    private Long    radius;
 
-    private String name;
+    private String  name;
 
-    private String hostname;
-    private int    port;
-    private String database;
-    private String user;
-    private String password;
-    private String praefix;
+    private String  hostname;
+    private int     port;
+    private String  database;
+    private String  user;
+    private String  password;
+    private String  praefix;
 
     private Boolean debug;
-    
+    private Boolean lokalchat;
+
     /**
      * @param plugin
      *            SimpleChat Plugin
@@ -74,8 +75,9 @@ public class ConfigData {
         setDatabase(config.getString("mysql.database"));
         setPraefix(config.getString("mysql.praefix"));
         setPort(config.getInt("mysql.port"));
-        
+
         setDebug(config.getBoolean("debug"));
+        setLokalchat(config.getBoolean("lokalchat", true));
     }
 
     /**
@@ -341,9 +343,25 @@ public class ConfigData {
     }
 
     /**
-     * @param debug the debug to set
+     * @param debug
+     *            the debug to set
      */
     public void setDebug(Boolean debug) {
         this.debug = debug;
+    }
+
+    /**
+     * @return the lokalchat
+     */
+    public Boolean getLokalchat() {
+        return lokalchat;
+    }
+
+    /**
+     * @param lokalchat
+     *            the lokalchat to set
+     */
+    public void setLokalchat(Boolean lokalchat) {
+        this.lokalchat = lokalchat;
     }
 }

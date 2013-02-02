@@ -76,6 +76,11 @@ public class ChatMessage {
             this.message = message.substring(1);
         }
 
+        if (!plugin.config.getLokalchat()) {
+            lokal = false;
+            global = true;
+        }
+
         this.channel = setChannel();
         this.format = setFormat();
         this.spyFormat = setSpyFormat();
@@ -107,7 +112,6 @@ public class ChatMessage {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Keine Berechtigung!"));
             log.info(String.format("%s hat keine berechtigung um %s zu schreiben!", this.playerDisplayName, this.channel));
         }
-
     }
 
     private void sendPrivateMessage() {
@@ -372,18 +376,14 @@ public class ChatMessage {
     private void sendLokalMessage() {
         this.messageParsed = parseMessage(this.message, this.format);
         int cnt = 0;
-        for (Player onlinePlayer : sender.getWorld().getPlayers()) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (!onlinePlayer.equals(sender)) {
                 final Location playerLoc = onlinePlayer.getPlayer().getLocation();
-                boolean abort = false;
                 if (playerLoc.getWorld() != world) {
-                    abort = true;
+                    continue;
                 }
                 final double delta = playerLoc.distance(loc);
                 if (delta > plugin.config.getRadius()) {
-                    abort = true;
-                }
-                if (abort) {
                     continue;
                 }
             }
