@@ -3,6 +3,10 @@ SimpleChat
 
 Simple Global Chat
 
+Downloads:
+[Letzter Erfolgreicher Build](http://ci.skymine.de/view/SimpleChat/job/SimpleChat/lastSuccessfulBuild/)
+[Letzter Release Build](http://ci.skymine.de/view/SimpleChat/job/SimpleChat/Release/)
+
 Config
 ==========
 ```
