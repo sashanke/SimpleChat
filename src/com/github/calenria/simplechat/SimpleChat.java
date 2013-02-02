@@ -64,12 +64,12 @@ import com.sk89q.minecraft.util.commands.WrappedCommandException;
  * @author Calenria
  */
 public class SimpleChat extends JavaPlugin {
-    public static final String REPLACE_STM               = "REPLACE INTO skymine_online_player (`player`, `player_ds`, `x`, `y`, `z`, `world`, `server`, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    public static final String REMOVE_STM                = "DELETE FROM skymine_online_player where `player` = ? and server = ?";
+    public static final String REPLACE_STM               = "REPLACE INTO %s (`player`, `player_ds`, `x`, `y`, `z`, `world`, `server`, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String REMOVE_STM                = "DELETE FROM %s where `player` = ? and server = ?";
 
-    public static final String SELECT_STM                = "SELECT * FROM skymine_online_player";
-    public static final String SELECT_SERVERS            = "SELECT server FROM skymine_online_player GROUP BY `server`";
-    public static final String SELECT_PLAYERS_PER_SERVER = "SELECT * FROM skymine_online_player where `server` = ?";
+    public static final String SELECT_STM                = "SELECT * FROM %s";
+    public static final String SELECT_SERVERS            = "SELECT server FROM %s GROUP BY `server`";
+    public static final String SELECT_PLAYERS_PER_SERVER = "SELECT * FROM %s where `server` = ?";
     /**
      * Standart Bukkit Logger.
      */
@@ -142,7 +142,7 @@ public class SimpleChat extends JavaPlugin {
                     if (!getMysql().checkConnection()) {
                         getMysql().open();
                     }
-                    PreparedStatement pstm = getMysql().prepare(REPLACE_STM);
+                    PreparedStatement pstm = getMysql().prepare(String.format(REPLACE_STM, getTable()));
                     for (Player player : players) {
                         pstm.setString(1, player.getName());
 
@@ -171,11 +171,11 @@ public class SimpleChat extends JavaPlugin {
             if (!getMysql().checkConnection()) {
                 getMysql().open();
             }
-            PreparedStatement serverps = getMysql().prepare(SELECT_SERVERS);
+            PreparedStatement serverps = getMysql().prepare(String.format(SELECT_SERVERS, getTable()));
             ResultSet servers = serverps.executeQuery();
             while (servers.next()) {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2Spieler auf &4[&6" + servers.getString("server") + "&4]"));
-                PreparedStatement pstm = getMysql().prepare(SELECT_PLAYERS_PER_SERVER);
+                PreparedStatement pstm = getMysql().prepare(String.format(SELECT_PLAYERS_PER_SERVER, getTable()));
                 pstm.setString(1, servers.getString("server"));
                 ResultSet rs = pstm.executeQuery();
                 String playerlist = "";
@@ -235,7 +235,7 @@ public class SimpleChat extends JavaPlugin {
                 reConSql();
                 getMysql().open();
             }
-            PreparedStatement pstmPlayers = getMysql().prepare(SELECT_STM);
+            PreparedStatement pstmPlayers = getMysql().prepare(String.format(SELECT_STM, getTable()));
             ResultSet rs = pstmPlayers.executeQuery();
             Vector<String> players = new Vector<String>();
             while (rs.next()) {
@@ -408,7 +408,7 @@ public class SimpleChat extends JavaPlugin {
      */
     @Override
     public final void onDisable() {
-        String sql = "DELETE FROM skymine_online_player where server = ?";
+        String sql = "DELETE FROM "+getTable()+" where server = ?";
         try {
             if (!getMysql().checkConnection()) {
                 getMysql().open();
@@ -445,7 +445,7 @@ public class SimpleChat extends JavaPlugin {
         setupConfig();
         initSql();
 
-        String sql = "DELETE FROM skymine_online_player where server = ?";
+        String sql = "DELETE FROM "+getTable()+" where server = ?";
         try {
             if (!getMysql().checkConnection()) {
                 getMysql().open();
@@ -593,7 +593,7 @@ public class SimpleChat extends JavaPlugin {
                 reConSql();
                 getMysql().open();
             }
-            PreparedStatement pstm = getMysql().prepare(SimpleChat.REMOVE_STM);
+            PreparedStatement pstm = getMysql().prepare(String.format(REMOVE_STM, getTable()));
             pstm.setString(1, player.getName());
             pstm.setString(2, config.getServer());
             pstm.executeUpdate();
@@ -616,7 +616,7 @@ public class SimpleChat extends JavaPlugin {
                 reConSql();
                 getMysql().open();
             }
-            PreparedStatement pstm = getMysql().prepare(SimpleChat.REPLACE_STM);
+            PreparedStatement pstm = getMysql().prepare(String.format(REPLACE_STM, getTable()));
             pstm.setString(1, player.getName());
             pstm.setString(2, parseName(player));
             pstm.setDouble(3, player.getLocation().getX());
