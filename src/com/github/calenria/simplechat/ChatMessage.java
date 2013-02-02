@@ -372,7 +372,7 @@ public class ChatMessage {
     private void sendLokalMessage() {
         this.messageParsed = parseMessage(this.message, this.format);
         int cnt = 0;
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+        for (Player onlinePlayer : sender.getWorld().getPlayers()) {
             if (!onlinePlayer.equals(sender)) {
                 final Location playerLoc = onlinePlayer.getPlayer().getLocation();
                 boolean abort = false;
