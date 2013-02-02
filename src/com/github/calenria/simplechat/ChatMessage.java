@@ -79,6 +79,7 @@ public class ChatMessage {
         if (!plugin.config.getLokalchat()) {
             lokal = false;
             global = true;
+            this.message = "!" + this.message;
         }
 
         this.channel = setChannel();
