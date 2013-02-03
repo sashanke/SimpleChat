@@ -11,6 +11,7 @@ lokalchat: true
 radius: 100
 name: '<player>'
 debug: false
+tablist: true 
 mysql:
   user: root
   password: password

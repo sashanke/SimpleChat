@@ -49,7 +49,8 @@ public class ConfigData {
 
     private Boolean debug;
     private Boolean lokalchat;
-
+    private Boolean tablist;
+    
     /**
      * @param plugin
      *            SimpleChat Plugin
@@ -78,6 +79,7 @@ public class ConfigData {
 
         setDebug(config.getBoolean("debug"));
         setLokalchat(config.getBoolean("lokalchat", true));
+        setTablist(config.getBoolean("tablist", true));
     }
 
     /**
@@ -364,4 +366,19 @@ public class ConfigData {
     public void setLokalchat(Boolean lokalchat) {
         this.lokalchat = lokalchat;
     }
+
+    /**
+     * @return the tablist
+     */
+    public synchronized Boolean getTablist() {
+        return tablist;
+    }
+
+    /**
+     * @param tablist the tablist to set
+     */
+    public synchronized void setTablist(Boolean tablist) {
+        this.tablist = tablist;
+    }
+
 }

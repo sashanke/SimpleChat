@@ -66,15 +66,17 @@ public class SimpleChatListener implements Listener {
         final Player sPlayer = event.getPlayer();
         event.setJoinMessage(null);
         plugin.addPlayer(sPlayer);
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.setChatter(new Chatter(sPlayer.getName(), plugin.config.getServer()));
-                String displayName = plugin.chat.getPlayerPrefix(sPlayer) + sPlayer.getName();
-                String tabName = "@#@login@#@" + sPlayer.getName() + "@#@" + displayName;
-                sPlayer.sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
-            }
-        });
+        if (plugin.config.getTablist()) {
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    plugin.setChatter(new Chatter(sPlayer.getName(), plugin.config.getServer()));
+                    String displayName = plugin.chat.getPlayerPrefix(sPlayer) + sPlayer.getName();
+                    String tabName = "@#@login@#@" + sPlayer.getName() + "@#@" + displayName;
+                    sPlayer.sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
+                }
+            });
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
