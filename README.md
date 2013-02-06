@@ -14,9 +14,6 @@ Downloads:
 
 Config
 ==========
-
-Bei Essentials change-displayname: false und Präfixe für Gruppen auf die Farben beschränken.
-
 ```
 server: Insomnia
 global: '&2[G] &f{jobs} <prefix><group> <player><suffix>&2: <msg>'
