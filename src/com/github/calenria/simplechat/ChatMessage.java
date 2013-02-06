@@ -53,7 +53,7 @@ public class ChatMessage {
         this.message = event.getMessage().trim();
         
         if (!this.sender.hasPermission("simplechat.color")) {
-            this.message = ChatColor.stripColor(this.message);
+            this.message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',this.message));
         }
         
         this.server = plugin.config.getServer();
