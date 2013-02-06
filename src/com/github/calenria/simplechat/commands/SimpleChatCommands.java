@@ -43,7 +43,7 @@ public class SimpleChatCommands {
     }
 
     // online(args, sender);
-    @Command(aliases = { "list", "online" }, desc = "Gibt eine Liste der Spieler auf allen Servern aus")
+    @Command(aliases = { "list", "online", "olist" }, desc = "Gibt eine Liste der Spieler auf allen Servern aus")
     // @CommandPermissions("simplechat.list")
     public final void olist(final CommandContext args, final CommandSender sender) throws CommandException {
         plugin.online(sender);
@@ -59,6 +59,8 @@ public class SimpleChatCommands {
         }
     }
 
+    
+    
     @Command(aliases = { "w", "tell", "msg" }, desc = "Flüstert mit einem Spieler. Ohne Nachricht benutzen um eine Privaten Kanal zu erstellen", usage = "spieler [nachricht]")
     @CommandPermissions("simplechat.privat")
     public final void w(final CommandContext args, final CommandSender sender) throws CommandException {
