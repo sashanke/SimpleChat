@@ -40,6 +40,8 @@ mysql:
 Permissions
 ==========
 ```
+Alle
+    - ^simplechat.gobal.off (Entziehen, bei Pex und GroupManager mit - -simplechat.gobal.off)
 User
     - simplechat.Global
     - simplechat.Hilfe
