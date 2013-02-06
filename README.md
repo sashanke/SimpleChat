@@ -47,6 +47,7 @@ User
     - simplechat.Hilfe
     - simplechat.Lokal
     - simplechat.Privat
+    - simplechat.color
 
 Admin
     - simplechat.Admin

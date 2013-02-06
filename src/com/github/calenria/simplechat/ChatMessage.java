@@ -51,6 +51,11 @@ public class ChatMessage {
         this.world = sender.getWorld();
         this.loc = sender.getLocation();
         this.message = event.getMessage().trim();
+        
+        if (!this.sender.hasPermission("simplechat.color")) {
+            this.message = ChatColor.stripColor(this.message);
+        }
+        
         this.server = plugin.config.getServer();
         this.length = message.length();
         this.global = message.startsWith("!");
