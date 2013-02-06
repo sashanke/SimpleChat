@@ -19,7 +19,10 @@ package com.github.calenria.simplechat.listener;
 
 import java.util.logging.Logger;
 
+import me.zford.jobs.container.JobsPlayer;
+
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -72,7 +75,7 @@ public class SimpleChatListener implements Listener {
                 plugin.setChatter(new Chatter(sPlayer.getName(), plugin.config.getServer()));
                 String displayName = sPlayer.getName();
                 if (plugin.config.getTablist()) {
-                    displayName = plugin.chat.getPlayerPrefix(sPlayer) + sPlayer.getName();
+                    displayName = parsePlayerName(sPlayer, plugin.config.getName());
                 }
                 String tabName = "@#@login@#@" + sPlayer.getName() + "@#@" + displayName;
                 sPlayer.sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
@@ -96,6 +99,33 @@ public class SimpleChatListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChatEvent(final AsyncPlayerChatEvent event) {
         new ChatMessage(event, plugin);
+    }
+
+    // TODO: util
+    public String parsePlayerName(Player player, String format) {
+        String parsedFormat = format;
+        if (plugin.chat != null) {
+            parsedFormat = parsedFormat.replace("<prefix>", plugin.chat.getPlayerPrefix(player));
+            parsedFormat = parsedFormat.replace("<suffix>", plugin.chat.getPlayerSuffix(player));
+            parsedFormat = parsedFormat.replace("<group>", plugin.chat.getPrimaryGroup(player));
+        } else {
+            parsedFormat = parsedFormat.replace("<prefix>", "");
+            parsedFormat = parsedFormat.replace("<suffix>", "");
+            parsedFormat = parsedFormat.replace("<group>", "");
+        }
+
+        parsedFormat = ChatColor.translateAlternateColorCodes('&', parsedFormat);
+        parsedFormat = parsedFormat.replace("<server>", plugin.config.getServer());
+
+        if (SimpleChat.jobs) {
+            JobsPlayer jPlayer = SimpleChat.jobsPlugin.getPlayerManager().getJobsPlayer(player.getName());
+            String honorific = "";
+            if (jPlayer != null)
+                honorific = jPlayer.getDisplayHonorific();
+            parsedFormat = parsedFormat.replace("{jobs}", honorific);
+        }
+
+        return parsedFormat = parsedFormat.replace("<player>", player.getName());
     }
 
 }
