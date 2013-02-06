@@ -49,6 +49,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.github.calenria.simplechat.commands.SimpleChatCommands;
 import com.github.calenria.simplechat.listener.SimpleChatListener;
 import com.github.calenria.simplechat.listener.SimpleChatPluginListener;
+import com.mysql.jdbc.CommunicationsException;
 import com.sk89q.bukkit.util.CommandsManagerRegistration;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.minecraft.util.commands.CommandPermissionsException;
@@ -159,6 +160,10 @@ public class SimpleChat extends JavaPlugin {
                         }
                         pstm.executeUpdate();
                     }
+                } catch (CommunicationsException ex) {
+                    log.warning("Verbindung zur MySQL verloren! Baue neue auf");
+                    reConSql();
+                    getMysql().open();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -184,6 +189,10 @@ public class SimpleChat extends JavaPlugin {
                 }
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', playerlist.substring(0, playerlist.length() - 2)));
             }
+        } catch (CommunicationsException ex) {
+            log.warning("Verbindung zur MySQL verloren! Baue neue auf");
+            reConSql();
+            getMysql().open();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -408,7 +417,7 @@ public class SimpleChat extends JavaPlugin {
      */
     @Override
     public final void onDisable() {
-        String sql = "DELETE FROM "+getTable()+" where server = ?";
+        String sql = "DELETE FROM " + getTable() + " where server = ?";
         try {
             if (!getMysql().checkConnection()) {
                 getMysql().open();
@@ -445,7 +454,7 @@ public class SimpleChat extends JavaPlugin {
         setupConfig();
         initSql();
 
-        String sql = "DELETE FROM "+getTable()+" where server = ?";
+        String sql = "DELETE FROM " + getTable() + " where server = ?";
         try {
             if (!getMysql().checkConnection()) {
                 getMysql().open();
@@ -600,9 +609,13 @@ public class SimpleChat extends JavaPlugin {
 
             updateCurrOnline();
 
+        } catch (CommunicationsException ex) {
+            log.warning("Verbindung zur MySQL verloren! Baue neue auf");
+            reConSql();
+            getMysql().open();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            reConSql();
+            getMysql().open();
         }
     }
 
@@ -631,8 +644,12 @@ public class SimpleChat extends JavaPlugin {
             }
             pstm.executeUpdate();
             updateCurrOnline();
+        } catch (CommunicationsException ex) {
+            log.warning("Verbindung zur MySQL verloren! Baue neue auf");
+            reConSql();
+            getMysql().open();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            log.warning("SQL Fehler beim hinzufügen eines neuen Spielers");
             e.printStackTrace();
         }
     }
