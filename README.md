@@ -7,9 +7,7 @@ Downloads:
 
 [Letzter Erfolgreicher Build](http://ci.skymine.de/view/SimpleChat/job/SimpleChat/lastSuccessfulBuild/)
 
-[Letzter Release Build](http://ci.skymine.de/view/SimpleChat/job/SimpleChat/Release/)
-
-[Bungee Plugin](http://ci.skymine.de/job/SimpleChat-Bungee/Release/)
+[Bungee Plugin](http://ci.skymine.de/job/SimpleChat-Bungee/lastStableBuild/)
 
 
 Config
