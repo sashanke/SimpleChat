@@ -149,8 +149,8 @@ public class ChatMessage {
         String parsedMessage = message.substring(1).trim();
         StringTokenizer st = new StringTokenizer(parsedMessage, " ");
         String conversionPartner = st.nextToken();
-        this.message = this.message.replace("@" + conversionPartner, "").trim().replaceAll("  ", " ");
-        this.message = this.message.replace("@ " + conversionPartner, "").trim();
+        this.message = this.message.replaceFirst("@" + conversionPartner, "").trim().replaceAll("  ", " ");
+        this.message = this.message.replaceFirst("@ " + conversionPartner, "").trim();
         if (this.message.length() == 0) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
             return;
