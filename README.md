@@ -52,6 +52,17 @@ Admin
     - simplechat.spy
     - simplechat.pmspy
 ```
+
+Bukkit Aliasse
+==========
+```
+  tell: w
+  msg: w
+  r: rep
+  reply: rep
+  list: olist
+```
+
 Benutzung
 ==========
 ```
