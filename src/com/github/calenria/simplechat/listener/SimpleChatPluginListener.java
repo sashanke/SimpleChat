@@ -55,13 +55,15 @@ public class SimpleChatPluginListener implements PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(String channel, Player sPlayer, byte[] byteMessage) {
-        if (!channel.equals("SimpleChat"))
-            return;
+        
         String pluginMessage = new String(byteMessage);
         if (plugin.config.getDebug()) {
             log.info("Recived plugin message: " + pluginMessage);
         }
-
+        
+        if (!channel.equals("SimpleChat"))
+            return;
+        
         StringTokenizer st = new StringTokenizer(pluginMessage, "@#@");
         String type = st.nextToken();
 
