@@ -51,11 +51,11 @@ public class ChatMessage {
         this.world = sender.getWorld();
         this.loc = sender.getLocation();
         this.message = event.getMessage().trim();
-        
+
         if (!this.sender.hasPermission("simplechat.color")) {
-            this.message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&',this.message));
+            this.message = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', this.message));
         }
-        
+
         this.server = plugin.config.getServer();
         this.length = message.length();
         this.global = message.startsWith("!");
@@ -79,6 +79,11 @@ public class ChatMessage {
 
         if (lokal && message.startsWith("~")) {
             this.message = message.substring(1);
+        }
+
+        if (help && this.message.trim().length() == 1) {
+            help = false;
+            lokal = true;
         }
 
         if (!plugin.config.getLokalchat()) {

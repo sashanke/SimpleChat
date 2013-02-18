@@ -118,7 +118,7 @@ public class SimpleChat extends JavaPlugin {
     private void initSql() {
         setMysql(new MySQL(log, config.getPraefix(), config.getHostname(), config.getPort(), config.getDatabase(), config.getUser(), config.getPassword()));
         if (getMysql().open()) {
-            log.log(Level.INFO, String.format("[%s] Database enabled %s", getDescription().getName(), getDescription().getVersion()));
+            log.log(Level.INFO, String.format("[%s] Database enabled", getDescription().getName()));
             setTable(config.getPraefix() + "online_player");
             if (!getMysql().isTable(getTable())) {
                 log.log(Level.INFO, String.format("[%s] Installing Table %s", getDescription().getName(), getTable()));
@@ -142,6 +142,9 @@ public class SimpleChat extends JavaPlugin {
                 try {
                     if (!getMysql().checkConnection()) {
                         getMysql().open();
+                        PreparedStatement pstm = getMysql().prepare("SELECT 1;");
+                        pstm.executeQuery();
+                        pstm.close();
                     }
                     PreparedStatement pstm = getMysql().prepare(String.format(REPLACE_STM, getTable()));
                     for (Player player : players) {
@@ -159,6 +162,7 @@ public class SimpleChat extends JavaPlugin {
                             pstm.setString(8, "Undefiniert");
                         }
                         pstm.executeUpdate();
+                        pstm.close();
                     }
                 } catch (CommunicationsException ex) {
                     log.warning("Verbindung zur MySQL verloren! Baue neue auf");
@@ -187,8 +191,12 @@ public class SimpleChat extends JavaPlugin {
                 while (rs.next()) {
                     playerlist += rs.getString("player_ds") + ", ";
                 }
+                rs.close();
+                pstm.close();
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', playerlist.substring(0, playerlist.length() - 2)));
             }
+            servers.close();
+            serverps.close();
         } catch (CommunicationsException ex) {
             log.warning("Verbindung zur MySQL verloren! Baue neue auf");
             reConSql();
@@ -250,6 +258,8 @@ public class SimpleChat extends JavaPlugin {
             while (rs.next()) {
                 players.add(rs.getString("player"));
             }
+            rs.close();
+            pstmPlayers.close();
             setCurrOnline(players);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -425,6 +435,7 @@ public class SimpleChat extends JavaPlugin {
             PreparedStatement pstm = getMysql().prepare(sql);
             pstm.setString(1, config.getServer());
             pstm.executeUpdate();
+            pstm.close();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -462,6 +473,7 @@ public class SimpleChat extends JavaPlugin {
             PreparedStatement pstm = getMysql().prepare(sql);
             pstm.setString(1, config.getServer());
             pstm.executeUpdate();
+            pstm.close();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -606,7 +618,7 @@ public class SimpleChat extends JavaPlugin {
             pstm.setString(1, player.getName());
             pstm.setString(2, config.getServer());
             pstm.executeUpdate();
-
+            pstm.close();
             updateCurrOnline();
 
         } catch (CommunicationsException ex) {
@@ -643,6 +655,7 @@ public class SimpleChat extends JavaPlugin {
                 pstm.setString(8, "Undefiniert");
             }
             pstm.executeUpdate();
+            pstm.close();
             updateCurrOnline();
         } catch (CommunicationsException ex) {
             log.warning("Verbindung zur MySQL verloren! Baue neue auf");
