@@ -5,9 +5,9 @@ Simple Global Chat
 
 Downloads:
 
-[Letzter Erfolgreicher Build](http://ci.skymine.de/view/SimpleChat/job/SimpleChat/lastSuccessfulBuild/)
+[Letzter Erfolgreicher Build](https://github.com/Calenria/SimpleChat/releases/download/v0.4.2/SimpleChat.jar)
 
-[Bungee Plugin](http://ci.skymine.de/job/SimpleChat-Bungee/lastStableBuild/)
+[Bungee Plugin](https://github.com/Calenria/SimpleChat-Bungee/releases/download/v0.4.2/SimpleChat-Bungee.jar)
 
 
 Config
