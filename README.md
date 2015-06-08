@@ -53,14 +53,19 @@ Admin
     - simplechat.pmspy
 ```
 
-Bukkit Aliasse
+Bukkit Aliasse (commands.yml)
 ==========
 ```
-  tell: w
-  msg: w
-  r: rep
-  reply: rep
-  list: olist
+  tell:
+  - w $1-
+  msg:
+  - w $1-
+  r:
+  - rep $1-
+  reply:
+  - rep $1-
+  list:
+  - olist
 ```
 
 Benutzung
