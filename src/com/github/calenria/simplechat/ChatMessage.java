@@ -177,10 +177,18 @@ public class ChatMessage {
         } else {
             String pMsg = "@#@pm@#@" + server + "@#@" + channel + "@#@" + sender.getName() + "@#@" + cPlayer + "@#@"
                     + parsePrivateMessage(this.message, this.format, cPlayer);
-            event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("SimpleChat");
+            out.writeUTF(pMsg);
+
+            event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
 
             pMsg = "@#@pmspy@#@" + server + "@#@pmspy@#@" + sender.getName() + "@#@" + parsePrivateMessage(this.message, this.spyFormat, cPlayer);
-            event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
+            out = ByteStreams.newDataOutput();
+            out.writeUTF("SimpleChat");
+            out.writeUTF(pMsg);
+
+            event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
         }
     }
 
@@ -213,11 +221,11 @@ public class ChatMessage {
     private void sendServerTeamMessage() {
         this.messageParsed = parseMessage(this.message, this.format);
         String pMsg = "@#@message@#@" + server + "@#@" + channel + "@#@" + sender.getName() + "@#@" + this.formatParsed;
-        
+
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("SimpleChat");
         out.writeUTF(pMsg);
-        
+
         event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
         Bukkit.broadcast(this.formatParsed, "simplechat." + channel.toLowerCase());
         log.info(this.formatParsed);
@@ -228,7 +236,7 @@ public class ChatMessage {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("SimpleChat");
         out.writeUTF(pMsg);
-        
+
         event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
     }
 
@@ -238,7 +246,7 @@ public class ChatMessage {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("SimpleChat");
         out.writeUTF(pMsg);
-        
+
         event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
 
         Player[] players = Bukkit.getOnlinePlayers();

@@ -5,9 +5,9 @@ Simple Global Chat
 
 Downloads:
 
-[Letzter Erfolgreicher Build](https://github.com/Calenria/SimpleChat/releases/download/v0.4.3/SimpleChat.jar)
+[Letzter Build](https://github.com/Calenria/SimpleChat/releases/download/v0.4.3/SimpleChat.jar)
 
-[Bungee Plugin](https://github.com/Calenria/SimpleChat-Bungee/releases/download/v0.4.3/SimpleChat-Bungee.jar)
+[Bungee Plugin](https://github.com/Calenria/SimpleChat-Bungee/)
 
 
 Config
