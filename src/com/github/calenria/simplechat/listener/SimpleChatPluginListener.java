@@ -19,6 +19,8 @@ package com.github.calenria.simplechat.listener;
 
 import com.github.calenria.simplechat.Chatter;
 import com.github.calenria.simplechat.SimpleChat;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -54,45 +56,57 @@ public class SimpleChatPluginListener implements PluginMessageListener {
     }
 
     @Override
-    public void onPluginMessageReceived(String channel, Player sPlayer, byte[] byteMessage) {
+    public void onPluginMessageReceived(String channel, Player player, byte[] message) {
 
-        String pluginMessage = new String(byteMessage);
+        String rawMessage = new String(message);
         if (plugin.config.getDebug()) {
-            log.info("Recived plugin message: " + pluginMessage);
+            log.info("Recived plugin message: " + rawMessage);
         }
+        
+        log.info("Recived plugin message: " + rawMessage);
+        
 
-        if (!channel.equals("SimpleChat"))
-            return;
-
-        StringTokenizer st = new StringTokenizer(pluginMessage, "@#@");
-        String type = st.nextToken();
-
-        if (type.equals("ping")) {
-            plugin.updateCurrOnline();
+        if (!channel.equals("BungeeCord")) {
             return;
         }
 
-        if (type.equals("wp")) {
-            String whisperPartner = st.nextToken();
-            String chatter = st.nextToken();
-            Chatter c = plugin.getChatter(chatter);
-            plugin.removeChatter(chatter);
-            c.setLastWhisperFrom(whisperPartner);
-            plugin.setChatter(c);
-            return;
+        ByteArrayDataInput in = ByteStreams.newDataInput(message);
+        String subchannel = in.readUTF();
+        if (subchannel.equals("SimpleChat")) {
+
+            String pluginMessage = in.readUTF();
+
+            StringTokenizer st = new StringTokenizer(pluginMessage, "@#@");
+            String type = st.nextToken();
+
+            if (type.equals("ping")) {
+                plugin.updateCurrOnline();
+                return;
+            }
+
+            if (type.equals("wp")) {
+                String whisperPartner = st.nextToken();
+                String chatter = st.nextToken();
+                Chatter c = plugin.getChatter(chatter);
+                plugin.removeChatter(chatter);
+                c.setLastWhisperFrom(whisperPartner);
+                plugin.setChatter(c);
+                return;
+            }
+
+            String serverName = st.nextToken();
+            if (plugin.config.getDebug()) {
+                log.info("Message From Servername: " + serverName);
+            }
+            if (st.hasMoreTokens()) {
+                String pluginChannel = st.nextToken();
+                @SuppressWarnings("unused")
+                String sender = st.nextToken();
+                String chatMessage = st.nextToken();
+                sendMessage(pluginChannel, chatMessage);
+            }
         }
 
-        String serverName = st.nextToken();
-        if (plugin.config.getDebug()) {
-            log.info("Message From Servername: " + serverName);
-        }
-        if (st.hasMoreTokens()) {
-            String pluginChannel = st.nextToken();
-            @SuppressWarnings("unused")
-            String sender = st.nextToken();
-            String message = st.nextToken();
-            sendMessage(pluginChannel, message);
-        }
     }
 
     private void sendMessage(String pluginChannel, String message) {

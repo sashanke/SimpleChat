@@ -47,7 +47,7 @@ public class ConfigData {
     private String password;
     private String praefix;
 
-    private Boolean debug;
+    private Boolean debug = false;
     private Boolean lokalchat;
     private Boolean tablist;
 

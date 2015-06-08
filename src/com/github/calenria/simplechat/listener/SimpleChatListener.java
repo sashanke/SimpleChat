@@ -20,6 +20,8 @@ package com.github.calenria.simplechat.listener;
 import com.github.calenria.simplechat.ChatMessage;
 import com.github.calenria.simplechat.Chatter;
 import com.github.calenria.simplechat.SimpleChat;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 import me.zford.jobs.container.JobsPlayer;
 
@@ -78,10 +80,12 @@ public class SimpleChatListener implements Listener {
                     displayName = parsePlayerName(sPlayer, plugin.config.getName());
                 }
                 String tabName = "@#@login@#@" + sPlayer.getName() + "@#@" + displayName;
-                sPlayer.sendPluginMessage(plugin, "SimpleChat", tabName.getBytes());
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("SimpleChat");
+                out.writeUTF(tabName);
+                sPlayer.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
             }
         });
-
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

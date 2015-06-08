@@ -456,6 +456,7 @@ public class SimpleChat extends JavaPlugin {
     @Override
     public final void onEnable() {
 
+
         if (getServer().getPluginManager().getPlugin("Jobs") != null) {
             jobs = true;
             jobsPlugin = (JobsPlugin) Bukkit.getServer().getPluginManager().getPlugin("Jobs");
@@ -485,10 +486,10 @@ public class SimpleChat extends JavaPlugin {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "SimpleChat");
-        Bukkit.getMessenger().registerIncomingPluginChannel(this, "SimpleChat", new SimpleChatPluginListener(this));
-
+        
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "SimpleChat", new SimpleChatPluginListener(this));
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new SimpleChatPluginListener(this));
         log.log(Level.INFO, String.format("[%s] Enabled Version %s", getDescription().getName(), getDescription().getVersion()));
     }
 

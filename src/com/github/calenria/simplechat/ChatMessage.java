@@ -1,5 +1,8 @@
 package com.github.calenria.simplechat;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
 import me.zford.jobs.container.JobsPlayer;
 
 import org.bukkit.Bukkit;
@@ -210,20 +213,33 @@ public class ChatMessage {
     private void sendServerTeamMessage() {
         this.messageParsed = parseMessage(this.message, this.format);
         String pMsg = "@#@message@#@" + server + "@#@" + channel + "@#@" + sender.getName() + "@#@" + this.formatParsed;
-        event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
+        
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("SimpleChat");
+        out.writeUTF(pMsg);
+        
+        event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
         Bukkit.broadcast(this.formatParsed, "simplechat." + channel.toLowerCase());
         log.info(this.formatParsed);
     }
 
     private void sendSpyMessage() {
         String pMsg = "@#@spy@#@" + server + "@#@spy@#@" + sender.getName() + "@#@" + parseMessage(this.message, this.spyFormat);
-        event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("SimpleChat");
+        out.writeUTF(pMsg);
+        
+        event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
     }
 
     private void sendServerMessage() {
         this.messageParsed = parseMessage(this.message, this.format);
         String pMsg = "@#@message@#@" + server + "@#@" + channel + "@#@" + sender.getName() + "@#@" + this.formatParsed;
-        event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("SimpleChat");
+        out.writeUTF(pMsg);
+        
+        event.getPlayer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
 
         Player[] players = Bukkit.getOnlinePlayers();
         for (Player player : players) {
