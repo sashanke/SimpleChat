@@ -17,7 +17,9 @@
  */
 package com.github.calenria.simplechat.listener;
 
-import java.util.logging.Logger;
+import com.github.calenria.simplechat.ChatMessage;
+import com.github.calenria.simplechat.Chatter;
+import com.github.calenria.simplechat.SimpleChat;
 
 import me.zford.jobs.container.JobsPlayer;
 
@@ -32,9 +34,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import com.github.calenria.simplechat.ChatMessage;
-import com.github.calenria.simplechat.Chatter;
-import com.github.calenria.simplechat.SimpleChat;
+import java.util.logging.Logger;
 
 /**
  * Eventlistener Klasse.
@@ -47,11 +47,11 @@ public class SimpleChatListener implements Listener {
      * Bukkit Logger.
      */
     @SuppressWarnings("unused")
-    private static Logger log    = Logger.getLogger("Minecraft");
+    private static Logger log = Logger.getLogger("Minecraft");
     /**
      * SimpleChat Plugin.
      */
-    private SimpleChat    plugin = null;
+    private SimpleChat plugin = null;
 
     /**
      * Registriert die Eventhandler

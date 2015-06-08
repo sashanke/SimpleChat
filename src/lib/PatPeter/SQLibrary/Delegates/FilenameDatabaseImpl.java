@@ -1,8 +1,8 @@
 package lib.PatPeter.SQLibrary.Delegates;
 
-import java.io.File;
-
 import lib.PatPeter.SQLibrary.DatabaseException;
+
+import java.io.File;
 
 /**
  * Implementation of databases that handle a single file.<br>
@@ -11,18 +11,18 @@ import lib.PatPeter.SQLibrary.DatabaseException;
  * @author Nicholas Solin, a.k.a. PatPeter
  */
 public class FilenameDatabaseImpl implements FilenameDatabase {
-	private File file;
-	
-	@Override
-	public File getFile() {
-		return this.file;
-	}
+    private File file;
 
-	@Override
-	public void setFile(File file) throws DatabaseException {
-		if (file == null)
-			throw new DatabaseException("File cannot be null.");
-		this.file = file;
-	}
+    @Override
+    public File getFile() {
+        return this.file;
+    }
+
+    @Override
+    public void setFile(File file) throws DatabaseException {
+        if (file == null)
+            throw new DatabaseException("File cannot be null.");
+        this.file = file;
+    }
 
 }

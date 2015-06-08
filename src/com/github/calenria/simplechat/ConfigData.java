@@ -27,30 +27,30 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public class ConfigData {
 
-    private String  server;
-    private String  hilfe;
-    private String  srvpm;
-    private String  global;
-    private String  team;
-    private String  lokal;
-    private String  spy;
-    private String  pmSpy;
-    private String  to;
-    private Long    radius;
+    private String server;
+    private String hilfe;
+    private String srvpm;
+    private String global;
+    private String team;
+    private String lokal;
+    private String spy;
+    private String pmSpy;
+    private String to;
+    private Long radius;
 
-    private String  name;
+    private String name;
 
-    private String  hostname;
-    private int     port;
-    private String  database;
-    private String  user;
-    private String  password;
-    private String  praefix;
+    private String hostname;
+    private int port;
+    private String database;
+    private String user;
+    private String password;
+    private String praefix;
 
     private Boolean debug;
     private Boolean lokalchat;
     private Boolean tablist;
-    
+
     /**
      * @param plugin
      *            SimpleChat Plugin
@@ -375,7 +375,8 @@ public class ConfigData {
     }
 
     /**
-     * @param tablist the tablist to set
+     * @param tablist
+     *            the tablist to set
      */
     public synchronized void setTablist(Boolean tablist) {
         this.tablist = tablist;

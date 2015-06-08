@@ -17,15 +17,15 @@
  */
 package com.github.calenria.simplechat.listener;
 
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
+import com.github.calenria.simplechat.Chatter;
+import com.github.calenria.simplechat.SimpleChat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.github.calenria.simplechat.Chatter;
-import com.github.calenria.simplechat.SimpleChat;
+import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 /**
  * Eventlistener Klasse.
@@ -37,11 +37,11 @@ public class SimpleChatPluginListener implements PluginMessageListener {
     /**
      * Bukkit Logger.
      */
-    private static Logger log    = Logger.getLogger("Minecraft");
+    private static Logger log = Logger.getLogger("Minecraft");
     /**
      * NextVote Plugin.
      */
-    private SimpleChat    plugin = null;
+    private SimpleChat plugin = null;
 
     /**
      * Registriert die Eventhandler und erstellt die Datenbank falls nicht vorhanden.
@@ -55,15 +55,15 @@ public class SimpleChatPluginListener implements PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(String channel, Player sPlayer, byte[] byteMessage) {
-        
+
         String pluginMessage = new String(byteMessage);
         if (plugin.config.getDebug()) {
             log.info("Recived plugin message: " + pluginMessage);
         }
-        
+
         if (!channel.equals("SimpleChat"))
             return;
-        
+
         StringTokenizer st = new StringTokenizer(pluginMessage, "@#@");
         String type = st.nextToken();
 

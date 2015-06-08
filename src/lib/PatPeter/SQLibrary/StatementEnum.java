@@ -6,4 +6,5 @@ package lib.PatPeter.SQLibrary;
  * 
  * @author Nicholas Solin, a.k.a. PatPeter
  */
-public interface StatementEnum {}
+public interface StatementEnum {
+}

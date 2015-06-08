@@ -1,14 +1,14 @@
 package com.github.calenria.simplechat;
 
 public class Chatter {
-    private String  name;
-    private String  conversionPartner = null;
-    private String  server;
+    private String name;
+    private String conversionPartner = null;
+    private String server;
 
-    private String  lastWhisperFrom;
+    private String lastWhisperFrom;
 
-    private boolean conversion        = false;
-    private boolean lastWhisper       = false;
+    private boolean conversion = false;
+    private boolean lastWhisper = false;
 
     /**
      * @return the conversion

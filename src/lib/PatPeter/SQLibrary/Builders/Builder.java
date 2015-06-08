@@ -6,4 +6,5 @@ package lib.PatPeter.SQLibrary.Builders;
  * 
  * @author Nicholas Solin, a.k.a. PatPeter
  */
-public interface Builder {}
+public interface Builder {
+}

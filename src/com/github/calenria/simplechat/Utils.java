@@ -17,6 +17,12 @@
  */
 package com.github.calenria.simplechat;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,12 +33,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-
 /**
  * Utility Klasse für alles mögliche.
  * 
@@ -42,79 +42,79 @@ public final class Utils {
     /**
      * 1 Sekunden.
      */
-    public static final long                       TASK_ONE_SECOND    = 20L;
+    public static final long TASK_ONE_SECOND = 20L;
 
     /**
      * 3 Sekunden.
      */
-    public static final long                       TASK_THREE_SECONDS = 60L;
+    public static final long TASK_THREE_SECONDS = 60L;
 
     /**
      * 1 Minute.
      */
-    public static final long                       TASK_ONE_MINUTE    = 1200L;
+    public static final long TASK_ONE_MINUTE = 1200L;
 
     /**
      * FileBuffer.
      */
-    private static final int                       BUFFER             = 1024;
+    private static final int BUFFER = 1024;
 
     /**
      * HashMap mit allen Minecraft Farben.
      */
-    public static final HashMap<String, ChatColor> COLORMAP           = new HashMap<String, ChatColor>() {
-                                                                          private static final long serialVersionUID = 1L;
-                                                                          {
-                                                                              put("<AQUA>", ChatColor.AQUA);
-                                                                              put("<BLACK>", ChatColor.BLACK);
-                                                                              put("<BLUE>", ChatColor.BLUE);
-                                                                              put("<BOLD>", ChatColor.BOLD);
-                                                                              put("<DARK_AQUA>", ChatColor.DARK_AQUA);
-                                                                              put("<DARK_BLUE>", ChatColor.DARK_BLUE);
-                                                                              put("<DARK_GRAY>", ChatColor.DARK_GRAY);
-                                                                              put("<DARK_GREEN>", ChatColor.DARK_GREEN);
-                                                                              put("<DARK_PURPLE>", ChatColor.DARK_PURPLE);
-                                                                              put("<DARK_RED>", ChatColor.DARK_RED);
-                                                                              put("<GOLD>", ChatColor.GOLD);
-                                                                              put("<GRAY>", ChatColor.GRAY);
-                                                                              put("<GREEN>", ChatColor.GREEN);
-                                                                              put("<ITALIC>", ChatColor.ITALIC);
-                                                                              put("<LIGHT_PURPLE>", ChatColor.LIGHT_PURPLE);
-                                                                              put("<MAGIC>", ChatColor.MAGIC);
-                                                                              put("<RED>", ChatColor.RED);
-                                                                              put("<RESET>", ChatColor.RESET);
-                                                                              put("<STRIKETHROUGH>", ChatColor.STRIKETHROUGH);
-                                                                              put("<UNDERLINE>", ChatColor.UNDERLINE);
-                                                                              put("<WHITE>", ChatColor.WHITE);
-                                                                              put("<YELLOW>", ChatColor.YELLOW);
-                                                                          }
-                                                                      };
+    public static final HashMap<String, ChatColor> COLORMAP = new HashMap<String, ChatColor>() {
+        private static final long serialVersionUID = 1L;
+        {
+            put("<AQUA>", ChatColor.AQUA);
+            put("<BLACK>", ChatColor.BLACK);
+            put("<BLUE>", ChatColor.BLUE);
+            put("<BOLD>", ChatColor.BOLD);
+            put("<DARK_AQUA>", ChatColor.DARK_AQUA);
+            put("<DARK_BLUE>", ChatColor.DARK_BLUE);
+            put("<DARK_GRAY>", ChatColor.DARK_GRAY);
+            put("<DARK_GREEN>", ChatColor.DARK_GREEN);
+            put("<DARK_PURPLE>", ChatColor.DARK_PURPLE);
+            put("<DARK_RED>", ChatColor.DARK_RED);
+            put("<GOLD>", ChatColor.GOLD);
+            put("<GRAY>", ChatColor.GRAY);
+            put("<GREEN>", ChatColor.GREEN);
+            put("<ITALIC>", ChatColor.ITALIC);
+            put("<LIGHT_PURPLE>", ChatColor.LIGHT_PURPLE);
+            put("<MAGIC>", ChatColor.MAGIC);
+            put("<RED>", ChatColor.RED);
+            put("<RESET>", ChatColor.RESET);
+            put("<STRIKETHROUGH>", ChatColor.STRIKETHROUGH);
+            put("<UNDERLINE>", ChatColor.UNDERLINE);
+            put("<WHITE>", ChatColor.WHITE);
+            put("<YELLOW>", ChatColor.YELLOW);
+        }
+    };
 
     /**
      * HashMap mit allen Minecraft Feuerwerks Farben.
      */
-    public static final HashMap<String, Color>     COLORFIREWORKMAP   = new HashMap<String, Color>() {
-                                                                          private static final long serialVersionUID = 1L;
-                                                                          {
-                                                                              put("AQUA", Color.AQUA);
-                                                                              put("BLACK", Color.BLACK);
-                                                                              put("BLUE", Color.BLUE);
-                                                                              put("BLUE", Color.FUCHSIA);
-                                                                              put("GRAY", Color.GRAY);
-                                                                              put("GREEN", Color.GREEN);
-                                                                              put("LIME", Color.LIME);
-                                                                              put("MAROON", Color.MAROON);
-                                                                              put("NAVY", Color.NAVY);
-                                                                              put("OLIVE", Color.OLIVE);
-                                                                              put("ORANGE", Color.ORANGE);
-                                                                              put("PURPLE", Color.PURPLE);
-                                                                              put("RED", Color.RED);
-                                                                              put("SILVER", Color.SILVER);
-                                                                              put("TEAL", Color.TEAL);
-                                                                              put("WHITE", Color.WHITE);
-                                                                              put("YELLOW", Color.YELLOW);
-                                                                          }
-                                                                      };
+    public static final HashMap<String, Color> COLORFIREWORKMAP = new HashMap<String, Color>() {
+        private static final long serialVersionUID = 1L;
+        {
+            put("AQUA", Color.AQUA);
+            put("BLACK", Color.BLACK);
+            put("BLUE", Color.BLUE);
+            put("BLUE", Color.FUCHSIA);
+            put("GRAY", Color.GRAY);
+            put("GREEN", Color.GREEN);
+            put("LIME", Color.LIME);
+            put("MAROON", Color.MAROON);
+            put("NAVY", Color.NAVY);
+            put("OLIVE", Color.OLIVE);
+            put("ORANGE", Color.ORANGE);
+            put("PURPLE", Color.PURPLE);
+            put("RED", Color.RED);
+            put("SILVER", Color.SILVER);
+            put("TEAL", Color.TEAL);
+            put("WHITE", Color.WHITE);
+            put("YELLOW", Color.YELLOW);
+        }
+    };
 
     /**
      * Ersetzt Farben und Platzhalter.

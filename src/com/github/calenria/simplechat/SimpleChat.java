@@ -17,6 +17,35 @@
  */
 package com.github.calenria.simplechat;
 
+import com.github.calenria.simplechat.commands.SimpleChatCommands;
+import com.github.calenria.simplechat.listener.SimpleChatListener;
+import com.github.calenria.simplechat.listener.SimpleChatPluginListener;
+import com.mysql.jdbc.CommunicationsException;
+import com.sk89q.bukkit.util.CommandsManagerRegistration;
+import com.sk89q.minecraft.util.commands.CommandException;
+import com.sk89q.minecraft.util.commands.CommandPermissionsException;
+import com.sk89q.minecraft.util.commands.CommandUsageException;
+import com.sk89q.minecraft.util.commands.CommandsManager;
+import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
+import com.sk89q.minecraft.util.commands.SimpleInjector;
+import com.sk89q.minecraft.util.commands.WrappedCommandException;
+
+import lib.PatPeter.SQLibrary.MySQL;
+
+import me.zford.jobs.bukkit.JobsPlugin;
+
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,49 +61,22 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lib.PatPeter.SQLibrary.MySQL;
-import me.zford.jobs.bukkit.JobsPlugin;
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import com.github.calenria.simplechat.commands.SimpleChatCommands;
-import com.github.calenria.simplechat.listener.SimpleChatListener;
-import com.github.calenria.simplechat.listener.SimpleChatPluginListener;
-import com.mysql.jdbc.CommunicationsException;
-import com.sk89q.bukkit.util.CommandsManagerRegistration;
-import com.sk89q.minecraft.util.commands.CommandException;
-import com.sk89q.minecraft.util.commands.CommandPermissionsException;
-import com.sk89q.minecraft.util.commands.CommandUsageException;
-import com.sk89q.minecraft.util.commands.CommandsManager;
-import com.sk89q.minecraft.util.commands.MissingNestedCommandException;
-import com.sk89q.minecraft.util.commands.SimpleInjector;
-import com.sk89q.minecraft.util.commands.WrappedCommandException;
-
 /**
  * SimpleChat ein BukkitPlugin zum verteilen von Vote Belohnungen.
  * 
  * @author Calenria
  */
 public class SimpleChat extends JavaPlugin {
-    public static final String REPLACE_STM               = "REPLACE INTO %s (`player`, `player_ds`, `x`, `y`, `z`, `world`, `server`, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    public static final String REMOVE_STM                = "DELETE FROM %s where `player` = ? and server = ?";
+    public static final String REPLACE_STM = "REPLACE INTO %s (`player`, `player_ds`, `x`, `y`, `z`, `world`, `server`, `group`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String REMOVE_STM = "DELETE FROM %s where `player` = ? and server = ?";
 
-    public static final String SELECT_STM                = "SELECT * FROM %s";
-    public static final String SELECT_SERVERS            = "SELECT server FROM %s GROUP BY `server`";
+    public static final String SELECT_STM = "SELECT * FROM %s";
+    public static final String SELECT_SERVERS = "SELECT server FROM %s GROUP BY `server`";
     public static final String SELECT_PLAYERS_PER_SERVER = "SELECT * FROM %s where `server` = ?";
     /**
      * Standart Bukkit Logger.
      */
-    private static Logger      log                       = Logger.getLogger("Minecraft");
+    private static Logger log = Logger.getLogger("Minecraft");
 
     /**
      * Vault Economy.
@@ -93,15 +95,15 @@ public class SimpleChat extends JavaPlugin {
     /**
      * Vault Permissions.
      */
-    private Permission                     permission = null;
-    private MySQL                          mysql;
+    private Permission permission = null;
+    private MySQL mysql;
 
-    private String                         table;
+    private String table;
     /**
      * Vault Economy.
      */
-    private Economy                        economy    = null;
-    private Vector<String>                 currOnline = new Vector<String>();
+    private Economy economy = null;
+    private Vector<String> currOnline = new Vector<String>();
 
     /**
      * @param currOnline
@@ -112,11 +114,13 @@ public class SimpleChat extends JavaPlugin {
     }
 
     public void reConSql() {
-        setMysql(new MySQL(log, config.getPraefix(), config.getHostname(), config.getPort(), config.getDatabase(), config.getUser(), config.getPassword()));
+        setMysql(new MySQL(log, config.getPraefix(), config.getHostname(), config.getPort(), config.getDatabase(), config.getUser(),
+                config.getPassword()));
     }
 
     private void initSql() {
-        setMysql(new MySQL(log, config.getPraefix(), config.getHostname(), config.getPort(), config.getDatabase(), config.getUser(), config.getPassword()));
+        setMysql(new MySQL(log, config.getPraefix(), config.getHostname(), config.getPort(), config.getDatabase(), config.getUser(),
+                config.getPassword()));
         if (getMysql().open()) {
             log.log(Level.INFO, String.format("[%s] Database enabled", getDescription().getName()));
             setTable(config.getPraefix() + "online_player");
@@ -347,22 +351,22 @@ public class SimpleChat extends JavaPlugin {
     /**
      * ResourceBundle der I18N Strings.
      */
-    private ResourceBundle    messages = null;
+    private ResourceBundle messages = null;
 
     /**
      * String der gewählten Sprache.
      */
-    private String            lang     = "de";
+    private String lang = "de";
 
     public SimpleChatListener listener;
 
-    public Chat               chat;
+    public Chat chat;
 
-    public ConfigData         config;
+    public ConfigData config;
 
-    public static boolean     jobs     = false;
+    public static boolean jobs = false;
 
-    public static JobsPlugin  jobsPlugin;
+    public static JobsPlugin jobsPlugin;
 
     /**
      * Die aktuell gewählte Sprache.
@@ -385,7 +389,8 @@ public class SimpleChat extends JavaPlugin {
     /**
      * Delegiert die registierten Befehle an die jeweiligen Klassen und prüft ob die Benutzung korrekt ist.
      * 
-     * @see org.bukkit.plugin.java.JavaPlugin#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String, java.lang.String[])
+     * @see org.bukkit.plugin.java.JavaPlugin#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String,
+     *      java.lang.String[])
      * @param sender
      *            Der Absender des Befehls
      * @param cmd
@@ -454,7 +459,9 @@ public class SimpleChat extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("Jobs") != null) {
             jobs = true;
             jobsPlugin = (JobsPlugin) Bukkit.getServer().getPluginManager().getPlugin("Jobs");
-            log.log(Level.INFO, String.format("[%s] Jobs %s found", getDescription().getName(), getServer().getPluginManager().getPlugin("Jobs").getDescription().getVersion()));
+            log.log(Level.INFO,
+                    String.format("[%s] Jobs %s found", getDescription().getName(), getServer().getPluginManager().getPlugin("Jobs").getDescription()
+                            .getVersion()));
         }
 
         setupPermissions();
@@ -573,7 +580,8 @@ public class SimpleChat extends JavaPlugin {
      * @return <tt>true</tt> wenn ein Vault Economyhandler gefunden wird.
      */
     private boolean setupEconomy() {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(
+                net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
         }
@@ -597,7 +605,8 @@ public class SimpleChat extends JavaPlugin {
      * @return <tt>true</tt> wenn ein Vault Permissionhandler gefunden wird.
      */
     private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(
+                net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }

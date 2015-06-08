@@ -9,7 +9,7 @@ import java.io.File;
  * @author Nicholas Solin, a.k.a. PatPeter
  */
 public interface FilenameDatabase {
-	File getFile();
-	
-	void setFile(File file);
+    File getFile();
+
+    void setFile(File file);
 }

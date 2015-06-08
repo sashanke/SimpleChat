@@ -1,8 +1,5 @@
 package com.github.calenria.simplechat;
 
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
-
 import me.zford.jobs.container.JobsPlayer;
 
 import org.bukkit.Bukkit;
@@ -13,34 +10,37 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.StringTokenizer;
+import java.util.logging.Logger;
+
 public class ChatMessage {
 
     /**
      * Bukkit Logger.
      */
-    private static Logger        log = Logger.getLogger("Minecraft");
+    private static Logger log = Logger.getLogger("Minecraft");
 
-    private Player               sender;
-    private World                world;
-    private Location             loc;
-    private String               playerName;
-    private String               server;
-    private String               channel;
-    private String               playerDisplayName;
-    private String               message;
-    private String               messageParsed;
-    private String               format;
-    private String               formatParsed;
-    private String               spyFormat;
-    private int                  length;
-    private boolean              global;
-    private boolean              team;
+    private Player sender;
+    private World world;
+    private Location loc;
+    private String playerName;
+    private String server;
+    private String channel;
+    private String playerDisplayName;
+    private String message;
+    private String messageParsed;
+    private String format;
+    private String formatParsed;
+    private String spyFormat;
+    private int length;
+    private boolean global;
+    private boolean team;
 
-    private boolean              help;
+    private boolean help;
 
-    private boolean              pm;
-    private boolean              lokal;
-    private SimpleChat           plugin;
+    private boolean pm;
+    private boolean lokal;
+    private SimpleChat plugin;
 
     private AsyncPlayerChatEvent event;
 
@@ -106,7 +106,8 @@ public class ChatMessage {
                 sendServerMessage();
             } else {
                 event.setCancelled(true);
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Du musst den globalen Chat erst wieder mit &4/globalchat&6 betreten bevor du etwas schreiben kannst!"));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                        "&6Du musst den globalen Chat erst wieder mit &4/globalchat&6 betreten bevor du etwas schreiben kannst!"));
                 return;
             }
         } else if (team && sender.hasPermission("simplechat." + channel.toLowerCase())) {
@@ -127,7 +128,8 @@ public class ChatMessage {
 
     private void sendPrivateMessage() {
         if (message.equals("@@")) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Chatpartner (" + plugin.getChatter(this.sender.getName()).getConversionPartner() + ") gelöscht"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Chatpartner ("
+                    + plugin.getChatter(this.sender.getName()).getConversionPartner() + ") gelöscht"));
             plugin.removeConversionPartner(this.sender.getName());
             return;
         }
@@ -137,14 +139,17 @@ public class ChatMessage {
             String conversionPartner = st.nextToken();
             String cPlayer = plugin.getOnlinePlayer(conversionPartner);
             if (cPlayer == null) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                        "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
                 return;
             } else {
                 plugin.setConversionPartner(this.sender.getName(), cPlayer);
                 if (st.hasMoreElements()) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Diese Nachricht und alle weiteren werden an (" + cPlayer + ") gesendet. Zum Beenden &4@@&6 oder &4/w&6 eingeben"));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Diese Nachricht und alle weiteren werden an (" + cPlayer
+                            + ") gesendet. Zum Beenden &4@@&6 oder &4/w&6 eingeben"));
                 } else {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Alle weiteren Nachrichten werden an (" + cPlayer + ") gesendet. Zum Beenden &4@@&6 oder &4/w&6 eingeben"));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&6Alle weiteren Nachrichten werden an (" + cPlayer
+                            + ") gesendet. Zum Beenden &4@@&6 oder &4/w&6 eingeben"));
                     return;
                 }
             }
@@ -157,15 +162,18 @@ public class ChatMessage {
         this.message = this.message.replaceFirst("@" + conversionPartner, "").trim().replaceAll("  ", " ");
         this.message = this.message.replaceFirst("@ " + conversionPartner, "").trim();
         if (this.message.length() == 0) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? ("
+                    + conversionPartner + ")"));
             return;
         }
         String cPlayer = plugin.getOnlinePlayer(conversionPartner);
         if (cPlayer == null) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? (" + conversionPartner + ")"));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Fehler beim Ermitteln des Chat Partners. Offline oder Verschrieben? ("
+                    + conversionPartner + ")"));
             return;
         } else {
-            String pMsg = "@#@pm@#@" + server + "@#@" + channel + "@#@" + sender.getName() + "@#@" + cPlayer + "@#@" + parsePrivateMessage(this.message, this.format, cPlayer);
+            String pMsg = "@#@pm@#@" + server + "@#@" + channel + "@#@" + sender.getName() + "@#@" + cPlayer + "@#@"
+                    + parsePrivateMessage(this.message, this.format, cPlayer);
             event.getPlayer().sendPluginMessage(plugin, "SimpleChat", pMsg.getBytes());
 
             pMsg = "@#@pmspy@#@" + server + "@#@pmspy@#@" + sender.getName() + "@#@" + parsePrivateMessage(this.message, this.spyFormat, cPlayer);
