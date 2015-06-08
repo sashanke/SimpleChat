@@ -62,9 +62,8 @@ public class SimpleChatPluginListener implements PluginMessageListener {
         if (plugin.config.getDebug()) {
             log.info("Recived plugin message: " + rawMessage);
         }
-        
+
         log.info("Recived plugin message: " + rawMessage);
-        
 
         if (!channel.equals("BungeeCord")) {
             return;
@@ -116,7 +115,8 @@ public class SimpleChatPluginListener implements PluginMessageListener {
         } else {
             Player[] players = Bukkit.getOnlinePlayers();
             for (Player player : players) {
-                if (player.hasPermission("simplechat." + pluginChannel.toLowerCase()) && !player.hasPermission("simplechat.gobal.off")) {
+                if (player.hasPermission("simplechat." + pluginChannel.toLowerCase())
+                        && (player.isOp() || !player.hasPermission("simplechat.gobal.off"))) {
                     player.sendMessage(message);
                 }
             }

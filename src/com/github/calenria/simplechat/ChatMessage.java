@@ -104,7 +104,7 @@ public class ChatMessage {
             sendLokalMessage();
             sendSpyMessage();
         } else if (global && sender.hasPermission("simplechat." + channel.toLowerCase())) {
-            if (!sender.hasPermission("simplechat.gobal.off")) {
+            if (sender.isOp() || !sender.hasPermission("simplechat.gobal.off")) {
                 event.setCancelled(true);
                 sendServerMessage();
             } else {
@@ -251,7 +251,7 @@ public class ChatMessage {
 
         Player[] players = Bukkit.getOnlinePlayers();
         for (Player player : players) {
-            if (player.hasPermission("simplechat." + this.channel.toLowerCase()) && !player.hasPermission("simplechat.gobal.off")) {
+            if (player.hasPermission("simplechat." + this.channel.toLowerCase()) && (player.isOp() || !player.hasPermission("simplechat.gobal.off"))) {
                 player.sendMessage(this.formatParsed);
             }
         }
